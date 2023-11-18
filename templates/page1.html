@@ -1,0 +1,12 @@
+<p> PAGE1 </p>
+
+<table border="0" style="border-collapse: collapse">
+    {% for i in range(3) %}
+    <tr align="center">
+        <td></td>
+        <td width="20"> \(=\) </td>
+        <td width="150" align="left"> \( {{ well_def1_deformation[0][i] }} \) </td>
+        <td width="60" align="left"> \( , \ {{ well_def2_deformation[1][i] }} \) </td>
+    </tr>
+    {% endfor %}
+</table>

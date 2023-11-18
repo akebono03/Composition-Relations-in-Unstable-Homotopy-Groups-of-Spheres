@@ -1,0 +1,296 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<header>
+    <style>
+        form{
+            color: red;
+            font-size: 100%;
+        }
+    </style>
+</header>
+
+<form method="post" action="{{ url_for('register') }}" class="input">
+    \(k={{k}}\) <br>
+    <p> \(n\) <input type="number" name="n" value={{n}} required> \( \ \ n = {{n}} \ \ \) 
+        <input type="submit" value="Run">
+    </p>
+    <p> \(t\) <input type="number" name="tt" value={{tt}} required> \( \ \ t = {{tt}} \ \ \) 
+        <input type="submit" value="Run">
+    </p>
+
+    <p>
+        <label><input type="radio" name="display_mode" value="relation" checked>Relation</label> &nbsp;
+        {% if display_mode == "E-image" %}
+        <label><input type="radio" name="display_mode" value="E-image" checked>\(\Sigma\)-image</label> &nbsp;
+        {% else %}
+        <label><input type="radio" name="display_mode" value="E-image">\(\Sigma\)-image</label> &nbsp;
+        {% endif %}
+        {% if display_mode == "H-image" %}
+        <label><input type="radio" name="display_mode" value="H-image" checked>H-image</label> &nbsp;
+        {% else %}
+        <label><input type="radio" name="display_mode" value="H-image">H-image</label> &nbsp;
+        {% endif %}
+        {% if display_mode == "P-image" %}
+        <label><input type="radio" name="display_mode" value="P-image" checked>P-image</label> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        {% else %}
+        <label><input type="radio" name="display_mode" value="P-image">P-image</label> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        {% endif %}
+    </p>
+
+    <p>
+        <label><input type="radio" name="first_dim" value="any" checked>\(n\)</label> &nbsp;
+        <label><input type="radio" name="first_dim" value="first_element">First element</label> &nbsp;
+        <label><input type="radio" name="first_dim" value="second_element">Second element</label> &nbsp;
+    </p>
+        <p>
+            <select name="coe_list[0]">
+                {% for coe in range(1,129) %}
+                    {% if coe==coe_list0[0] %}
+                        <option value="{{ coe }}" selected>{{ coe }}</option>
+                    {% else %}
+                        <option value="{{ coe }}">{{ coe }}</option>            
+                    {% endif %}
+                {% endfor %}
+            </select> 
+            <select name="coe_list[1]">
+                {% for coe in range(1,129) %}
+                    {% if coe==coe_list0[1] %}
+                        <option value="{{ coe }}" selected>{{ coe }}</option>
+                    {% else %}
+                        <option value="{{ coe }}">{{ coe }}</option>            
+                    {% endif %}
+                {% endfor %}
+            </select> 
+            <select name="coe_list[2]">
+                {% for coe in range(1,129) %}
+                    {% if coe==coe_list0[2] %}
+                        <option value="{{ coe }}" selected>{{ coe }}</option>
+                    {% else %}
+                        <option value="{{ coe }}">{{ coe }}</option>            
+                    {% endif %}
+                {% endfor %}
+            </select> 
+            <select name="coe_list[3]">
+                {% for coe in range(1,129) %}
+                    {% if coe==coe_list0[3] %}
+                        <option value="{{ coe }}" selected>{{ coe }}</option>
+                    {% else %}
+                        <option value="{{ coe }}">{{ coe }}</option>            
+                    {% endif %}
+                {% endfor %}
+            </select> 
+            <select name="coe_list[4]">
+                {% for coe in range(1,129) %}
+                    {% if coe==coe_list0[4] %}
+                        <option value="{{ coe }}" selected>{{ coe }}</option>
+                    {% else %}
+                        <option value="{{ coe }}">{{ coe }}</option>            
+                    {% endif %}
+                {% endfor %}
+            </select> 
+            <select name="coe_list[5]">
+                {% for coe in range(1,129) %}
+                    {% if coe==coe_list0[5] %}
+                        <option value="{{ coe }}" selected>{{ coe }}</option>
+                    {% else %}
+                        <option value="{{ coe }}">{{ coe }}</option>            
+                    {% endif %}
+                {% endfor %}
+            </select> 
+        </p>
+        <p> 
+            <select name="symbols0[0]">
+                {% for i in symbol_list %}
+                    {% if i==symbols0[0] %}
+                        <option value="{{ i }}" selected>{{ i }}</option>
+                    {% else %}
+                        <option value="{{ i }}">{{ i }}</option>            
+                    {% endif %}
+                {% endfor %}
+            </select>
+
+            <select name="displays[0]">
+                {% for i in display_list %}
+                    {% if i==displays[0] %}
+                        <option value="{{ i }}" selected>{{ i }}</option>
+                    {% else %}
+                        <option value="{{ i }}">{{ i }}</option>            
+                    {% endif %}
+                {% endfor %}
+            </select> 
+            <select name="symbols0[1]">
+                {% for i in symbol_list %}
+                    {% if i==symbols0[1] %}
+                        <option value="{{ i }}" selected>{{ i }}</option>
+                    {% else %}
+                        <option value="{{ i }}">{{ i }}</option>            
+                    {% endif %}
+                {% endfor %}
+            </select>
+
+        <select name="displays[1]">
+        <option value=" "></option>
+        {% for i in display_list %}
+            {% if i==displays[1] %}
+                <option value="{{ i }}" selected>{{ i }}</option>
+            {% else %}
+                <option value="{{ i }}">{{ i }}</option>            
+            {% endif %}
+        {% endfor %}
+    </select>
+    <select name="symbols0[2]">
+        {% for i in symbol_list %}
+            {% if i==symbols0[2] %}
+                <option value="{{ i }}" selected>{{ i }}</option>
+            {% else %}
+                <option value="{{ i }}">{{ i }}</option>            
+            {% endif %}
+        {% endfor %}
+    </select>
+    <select name="displays[2]">
+        <option value=" "></option>
+        {% for i in display_list %}
+            {% if i==displays[2] %}
+                <option value="{{ i }}" selected>{{ i }}</option>
+            {% else %}
+                <option value="{{ i }}">{{ i }}</option>            
+            {% endif %}
+        {% endfor %}
+    </select>
+    <select name="symbols0[3]">
+        {% for i in symbol_list %}
+            {% if i==symbols0[3] %}
+                <option value="{{ i }}" selected>{{ i }}</option>
+            {% else %}
+                <option value="{{ i }}">{{ i }}</option>            
+            {% endif %}
+        {% endfor %}
+    </select>
+    <select name="displays[3]">
+        <option value=" "></option>
+        {% for i in display_list %}
+            {% if i==displays[3] %}
+                <option value="{{ i }}" selected>{{ i }}</option>
+            {% else %}
+                <option value="{{ i }}">{{ i }}</option>            
+            {% endif %}
+        {% endfor %}
+    </select>
+    <select name="symbols0[4]">
+        {% for i in symbol_list %}
+            {% if i==symbols0[4] %}
+                <option value="{{ i }}" selected>{{ i }}</option>
+            {% else %}
+                <option value="{{ i }}">{{ i }}</option>            
+            {% endif %}
+        {% endfor %}
+    </select>
+    <select name="displays[4]">
+        <option value=" "></option>
+        {% for i in display_list %}
+            {% if i==displays[4] %}
+                <option value="{{ i }}" selected>{{ i }}</option>
+            {% else %}
+                <option value="{{ i }}">{{ i }}</option>            
+            {% endif %}
+        {% endfor %}
+    </select>
+    <select name="symbols0[5]">
+        {% for i in symbol_list %}
+            {% if i==symbols0[5] %}
+                <option value="{{ i }}" selected>{{ i }}</option>
+            {% else %}
+                <option value="{{ i }}">{{ i }}</option>            
+            {% endif %}
+        {% endfor %}
+    </select>
+    <select name="displays[5]">
+        <option value=" "></option>
+        {% for i in display_list %}
+            {% if i==displays[5] %}
+                <option value="{{ i }}" selected>{{ i }}</option>
+            {% else %}
+                <option value="{{ i }}">{{ i }}</option>            
+            {% endif %}
+        {% endfor %}
+    </select> 
+    <select name="symbols0[6]">
+        {% for i in symbol_list %}
+            {% if i==symbols0[6] %}
+                <option value="{{ i }}" selected>{{ i }}</option>
+            {% else %}
+                <option value="{{ i }}">{{ i }}</option>            
+            {% endif %}
+        {% endfor %}
+    </select>
+</p>
+</form>
+
+<font color="red">
+<p> \( \pi_{ {{n+k}} }^{ {{n}} } = {{ group_tex }} \) </p>
+
+{% if display_mode == 'P-image' %}
+    <p> \( \overset{P}{\longrightarrow} \ \pi_{ {{n+k-2}} }^{ {{((n-1)/2)|int}} } = {{ group1_tex }} \) </p>
+{% elif display_mode == 'E-image' %}
+    <p> \( \overset{\Sigma}{\longrightarrow} \ \pi_{ {{n+k+1}} }^{ {{n+1}} } = {{ group1_tex }} \) </p>
+{% elif display_mode == 'H-image' %}
+    <p> \( \overset{H}{\longrightarrow} \ \pi_{ {{n+k}} }^{ {{2*n-1}} } = {{ group1_tex }} \) </p>
+{% endif %}
+</font>
+
+{% if '{' in symbols0 %}
+    <p> \( {{ coset_pi1 }} = {{ coset_pi_tex1 }}\) </p>
+    
+    <font color="red">
+    <p> \( {{ coset1 }} = {{ coset_tex1 }}\) </p>
+    </font>
+    
+    <p> \( {{ coset_pi2 }} = {{ coset_pi_tex2 }}\) </p>
+    
+    <font color="red">
+    <p> \( {{ coset2 }} = {{ coset_tex2 }} \) </p>
+    </font>
+{% endif %}
+
+<table border="0" style="border-collapse: collapse">
+    {% if '{' in symbols0 %}
+    <tr>
+        <th width="60" align="right"> \( {{ disp0 }} \) </th>
+        <th width="20"> \(\ni\) </th>
+        <th width="150" align="left"> \( {{ include_element_tex }} \) </th>
+        <th width="60" align="left"> \( , \ {{ reference_tex_list[0] }} \) </th>
+    </tr>
+    {% else %}
+    <tr>
+        <th width="60" align="right"> \( {{ disp0 }} \) </th>
+        <th width="20"> \(=\) </th>
+        <th width="150" align="left"> \( {{ relation_tex_list[0] }} \) </th>
+        <th width="60" align="left"> \( , \ {{ reference_tex_list[0] }} \) </th>
+    </tr>
+    {% endif %}
+    {% for i in range(relation_count - 1) %}
+    <tr align="center">
+        <td></td>
+        <td width="20"> \(=\) </td>
+        <td width="150" align="left"> \( {{ relation_tex_list[i+1] }} \) </td>
+        <td width="60" align="left"> \( , \ {{ reference_tex_list[i+1] }} \) </td>
+    </tr>
+    {% endfor %}
+    {% if '{' in symbols0 %}
+    <tr align="right">
+        <td>\( {{ well_def1 }} \)</td>
+        <td width="20"> \(=\) </td>
+        <td width="150" align="left"> \( {{ well_def1_relation }} \) </td>
+        <td width="60" align="left"> \( , \ {{ well_def1_reference }} \) </td>
+    </tr>
+    <tr align="right">
+        <td>\( {{ well_def2 }} \)</td>
+        <td width="20"> \(=\) </td>
+        <td width="150" align="left"> \( {{ well_def2_relation }} \) </td>
+        <td width="60" align="left"> \( , \ {{ well_def2_reference }} \) </td>
+    </tr>
+    {% endif %}
+</table>
+
+{% endblock %}
