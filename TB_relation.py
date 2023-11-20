@@ -8,26 +8,26 @@ import pandas as pd
 import sympy as sp
 import os
 
-app = Flask(__name__)
+app=Flask(__name__)
 
-df = pd.read_csv('./HyoujiGen.csv')
-display_list = df['display'].unique().tolist()
+df=pd.read_csv('./HyoujiGen.csv')
+display_list=df['display'].unique().tolist()
 stable_display_list=df[(df['kinds']==0)]['display'].unique().tolist()
-symbol_list = [' ', ',', '{', '}', '[', ']', '+']
+symbol_list=[' ',',','{','}','[',']','+']
 stable_symbol_list=[' ',',','(',')','〈','〉','+']
 
-n = 2
-k = 0
-tt = 0
-coe_list = [1]*6
-coe_list0 = [1]*6
-displays = ['','','','','','']
+n=2
+k=0
+tt=0
+coe_list=[1]*6
+coe_list0=[1]*6
+displays=['','','','','','']
 stable_displays=['','','','','','']
-relation_tex_list = []
-reference_tex_list = []
-relation_count = 0
-display_mode = ''
-symbols0 = ['', '', '', '', '', '', '']
+relation_tex_list=[]
+reference_tex_list=[]
+relation_count=0
+display_mode=''
+symbols0=['','','','','','','']
 stable_symbols0=['','','','','','','']
 
 @app.route('/')
@@ -41,25 +41,25 @@ def relation():
 
 @app.route('/register', methods=['post'])
 def register():
-  n = request.form['n']
-  n = int(n)
+  n=request.form['n']
+  n=int(n)
 
-  tt = request.form['tt']
-  tt = int(tt)
+  tt=request.form['tt']
+  tt=int(tt)
 
-  db_name = 'sphere.db'
-  conn = sqlite3.connect(db_name)
-  df = pd.read_csv('./sphere.csv')
+  db_name='sphere.db'
+  conn=sqlite3.connect(db_name)
+  df=pd.read_csv('./sphere.csv')
   df.to_sql('sphere', conn, if_exists='replace')
-  df = pd.read_csv('./HyoujiGen.csv')
+  df=pd.read_csv('./HyoujiGen.csv')
   df.to_sql('gen', conn, if_exists='replace')
-  df = pd.read_csv('./TBtable.csv')
+  df=pd.read_csv('./TBtable.csv')
   df.to_sql('TBtable', conn, if_exists='replace')
-  df = pd.read_csv('./sphere_relation2.csv')
+  df=pd.read_csv('./sphere_relation2.csv')
   df.to_sql('sphere_relation', conn, if_exists='replace')
-  c = conn.cursor()
+  c=conn.cursor()
 
-  inf = float('inf')
+  inf=float('inf')
 
 #dict_factoryの定義
   def dict_factory(cursor,row):
@@ -379,7 +379,7 @@ def register():
         def mod_coe(i):
           try:
             if ord_li[i]==inf: return rep_coe[i]
-            elif rep_coe[i]%ord_li[i]>ord_li[i]/2: return rep_coe[i]%ord_li[i]-ord_li[i]
+            elif rep_coe[i]%ord_li[i]>ord_li[i]//2: return rep_coe[i]%ord_li[i]-ord_li[i]
             else: return rep_coe[i]%ord_li[i]
           except: return rep_coe[i]
         A=sp.Matrix([mod_coe(i) for i in range(direct_sum)])
