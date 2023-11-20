@@ -383,291 +383,261 @@ def register():
       else:res=''
       return res
 
-
-
-    def P_coe(self, id):
-      int_list = []
-      ref_tex = ''
-      order_list = self.order_list()
+    def P_coe(self,id):
+      res=[]
+      ref_tex=''
+      order_list=self.order_list()
       try:
-        if order_list == [0] or order_list == []:
-          int_list = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        if order_list==[0] or order_list==[]:res=[0]*12
         else:
-          queryid = f'select * from sphere where n = {self.n} and k = {self.k} and id = {id}'
+          queryid=f'select*from sphere where n={self.n} and k={self.k} and id={id}'
           for row in c.execute(queryid):
-            if row['P_coe'] is not None:
-              int_list = list(map(int, row['P_coe'].split()))
-              ref_tex = row['P']  
-      except:
-        pass
-      del int_list[HomotopyGroup((self.n - 1) / 2, (self.n + 2 * self.k - 3) / 2).direct_sum():] 
-      # リストの長さを direct_sum の個数にする
-      return int_list, ref_tex
+            if row['P_coe'] is None:continue
+            res=list(map(int,row['P_coe'].split()))
+            ref_tex=row['P']
+      except:pass
+      del res[HomotopyGroup((self.n-1)//2,(self.n+2*self.k-3)//2).direct_sum():]
+#リストの長さをdirect_sumの個数にする
+      return res,ref_tex
 
-    def E_coe(self, id):
-      int_list = []
-      ref = []
+    def E_coe(self,id):
+      res=[]
+      ref_tex=[]
       for row in c.execute(self.query_id(id)):
-        if row['E_coe'] is not None:
-          int_list = list(map(int, row['E_coe'].split()))
-          ref = row['E'] #if row['E'] is not None else '' 
-        hg = HomotopyGroup(self.n+1, self.k) if self.k+2 >= self.n \
-          else HomotopyGroup(self.k+2, self.k)
-        del int_list[hg.direct_sum():]
-      return int_list, ref
+        if row['E_coe'] is None:continue
+        res=list(map(int,row['E_coe'].split()))
+        ref_tex=row['E']
+      hg=HomotopyGroup(self.n+1,self.k) if self.k+2>=self.n else HomotopyGroup(self.k+2,self.k)
+      del res[hg.direct_sum():]
+      return res,ref_tex
 
-    def H_coe(self, id):
-      int_list = []
-      ref_tex = ''
-      if self.k + 2 >= self.n:
+    def H_coe(self,id):
+      res=[]
+      ref_tex=''
+      if self.k+2>=self.n:
         for row in c.execute(self.query_id(id)):
-          if row['H_coe'] is not None:
-            int_list = list(map(int, row['H_coe'].split()))
-            ref_tex = row['H']
-      else:
-        int_list = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-      del int_list[HomotopyGroup(2 * self.n - 1, self.k - self.n + 1).direct_sum():] 
-      # リストの長さを direct_sum の個数にする
-      return int_list, ref_tex
+          if row['H_coe'] is None:continue
+          res=list(map(int,row['H_coe'].split()))
+          ref_tex=row['H']
+      else:res=[0]*12
+      del res[HomotopyGroup(2*self.n-1,self.k-self.n+1).direct_sum():] 
+#リストの長さをdirect_sumの個数にする
+      return res,ref_tex
 
-    def P_image_tex(self, id):
-      if self.n % 2 == 1:
-        P_hg = HomotopyGroup(int((self.n - 1) / 2), int((self.n + 2 * self.k - 3) / 2))
-        return_P_image_tex = P_hg.rep_linear_tex(self.P_coe(id)[0])
-      else:
-        return_P_image_tex = ''
-      return return_P_image_tex
+    def P_image_tex(self,id):
+      if self.n%2==1:
+        P_hg=HomotopyGroup((self.n-1)//2,(self.n+2*self.k-3)//2)
+        self_P_coe=self.P_coe(id)
+        res=P_hg.rep_linear_tex(self_P_coe[0])
+        res_ref=self_P_coe[1]
+      else:res,res_ref='',''
+      return res,res_ref
 
-    def E_image_tex(self, id):
-      E_hg = HomotopyGroup(self.n+1, self.k)
-      return_E_image_tex = E_hg.rep_linear_tex(self.E_coe(id)[0])
-      return return_E_image_tex
+    def E_image_tex(self,id):
+      E_hg=HomotopyGroup(self.n+1,self.k)
+      self_E_coe=self.E_coe(id)
+      res=E_hg.rep_linear_tex(self_E_coe[0])
+      res_ref=self_E_coe[1]
+      return res,res_ref
 
-    def H_image_tex(self, id):
-      H_hg = HomotopyGroup(2*self.n-1,self.k-self.n+1)
-      return_H_image_tex = H_hg.rep_linear_tex(self.H_coe(id)[0])
-      return return_H_image_tex
+    def H_image_tex(self,id):
+      H_hg=HomotopyGroup(2*self.n-1,self.k-self.n+1)
+      self_H_coe=self.H_coe(id)
+      res=H_hg.rep_linear_tex(self_H_coe[0])
+      res_ref=self_H_coe[1]
+      return res,res_ref
 
-    def rep_coe_to_id_list(self, repcoelist):
-      return_id_list = [i for i in range(self.direct_sum()) if repcoelist[i] != 0]
-      return_coe_list = [repcoelist[i] for i in return_id_list]
-      return return_id_list, return_coe_list
+    def rep_coe_to_id_list(self,repcoeli):
+      res_id=[i for i in range(self.direct_sum()) if repcoeli[i]!=0]
+      res_coe=[repcoeli[i] for i in res_id]
+      return res_id,res_coe
 
-    def rep_coe_to_el_list(self, repcoelist):
-      id_list = self.rep_coe_to_id_list(repcoelist)
-      return_el_list = [self.rep_list(i) for i in id_list[0]]
-      return_coe_list = id_list[1]
-      return return_el_list, return_coe_list
+    def rep_coe_to_el_list(self,repcoeli):
+      id_li=self.rep_coe_to_id_list(repcoeli)
+      res_el=[self.rep_list(i) for i in id_li[0]]
+      res_coe=id_li[1]
+      return res_el,res_coe
 
     def P_coe_matrix(self):
-      matrix_list = []
-      direct_sum = self.direct_sum()
-      for id in range(direct_sum):
+      matrix_li=[]
+      d_sum=self.direct_sum()
+      for id in range(d_sum):
         for row in c.execute(self.query_id(id)):
-          int_list = list(map(int, row['P_coe'].split()))
-        del int_list[direct_sum:]
-        matrix_list.append(int_list)
-      return_P_coe_matrix = sp.Matrix(matrix_list)
-      return return_P_coe_matrix
+          int_li=list(map(int,row['P_coe'].split()))
+        del int_li[d_sum:]
+        matrix_li.append(int_li)
+      return sp.Matrix(matrix_li)
 
     def E_coe_matrix(self):
-      matrix_list = []
-      direct_sum = self.direct_sum()
-      for id in range(direct_sum):
+      matrix_li=[]
+      d_sum=self.direct_sum()
+      for id in range(d_sum):
         for row in c.execute(self.query_id(id)):
-          int_list = list(map(int, row['E_coe'].split()))
-        del int_list[direct_sum:]
-        matrix_list.append(int_list)
-      return_E_coe_matrix = sp.Matrix(matrix_list)
-      return return_E_coe_matrix
+          int_li=list(map(int,row['E_coe'].split()))
+        del int_li[d_sum:]
+        matrix_li.append(int_li)
+      return sp.Matrix(matrix_li)
 
     def H_coe_matrix(self):
-      matrix_list = []
-      direct_sum = self.direct_sum()
-      for id in range(direct_sum):
+      matrix_li=[]
+      d_sum=self.direct_sum()
+      for id in range(d_sum):
         for row in c.execute(self.query_id(id)):
-          int_list = list(map(int, row['H_coe'].split()))
-        del int_list[direct_sum:]
-        matrix_list.append(int_list)
-      return_H_coe_matrix = sp.Matrix(matrix_list)
-      return return_H_coe_matrix
+          int_li=list(map(int,row['H_coe'].split()))
+        del int_li[d_sum:]
+        matrix_li.append(int_li)
+      return sp.Matrix(matrix_li)
 
     def rep_to_gen_matrix(self):
-      matrix_list = []
-      direct_sum = self.direct_sum()
-      for id in range(direct_sum):
+      matrix_li=[]
+      d_sum=self.direct_sum()
+      for id in range(d_sum):
         for row in c.execute(self.query_id(id)):
-          int_list = list(map(int, row['gen_coe'].split()))
-        del int_list[direct_sum:]
-        matrix_list.append(int_list)
-      return_matrix = sp.Matrix(matrix_list)
-      return return_matrix
+          int_li=list(map(int,row['gen_coe'].split()))
+        del int_li[d_sum:]
+        matrix_li.append(int_li)
+      return sp.Matrix(matrix_li)
 
-    def rep_coe_to_gen_coe(self, repcoelist):
-      repcoematrix = sp.Matrix([repcoelist])
-      return_gen_coe_list = (repcoematrix * self.rep_to_gen_matrix().inv()).tolist()[0]
-      return return_gen_coe_list
+    def rep_coe_to_gen_coe(self,repcoeli):
+      repcoematrix=sp.Matrix([repcoeli])
+      return (repcoematrix*self.rep_to_gen_matrix().inv()).tolist()[0]
 
-    def gen_coe_to_rep_coe(self, gencoelist):
-      gencoematrix = sp.Matrix([gencoelist])
-      return_rep_coe_list = (gencoematrix * self.rep_to_gen_matrix()).tolist()[0]
-      return return_rep_coe_list
+    def gen_coe_to_rep_coe(self,gencoeli):
+      gencoematrix=sp.Matrix([gencoeli])
+      return (gencoematrix*self.rep_to_gen_matrix()).tolist()[0]
 
-    def mod_gen_coe_list(self, gencoe):
-      order_list = self.order_list()
-      direct_sum = self.direct_sum()
+    def mod_gen_coe_list(self,gencoe):
+      order_li=self.order_list()
+      d_sum=self.direct_sum()
       def mod_coe(i):
-        if order_list[i] == inf:
-          return gencoe[i]
-        elif gencoe[i] % order_list[i] > order_list[i] /2:
-          return gencoe[i] % order_list[i] - order_list[i]
-        else:
-          return gencoe[i] % order_list[i]
-      return_mod_gen_coe_list = [mod_coe(i) for i in range(direct_sum)]
-      return return_mod_gen_coe_list
+        oi,gi=order_li[i],gencoe[i]
+        if oi==inf:return gi
+        elif gi%oi>oi//2:return gi%oi-oi
+        else:return gi%oi
+      return [mod_coe(i) for i in range(d_sum)]
 
     def group_is_zero(self):
-      groupiszero = False
+      res=False
       for row in c.execute(self.query):
-        groupiszero = True if row['orders'] == 0 else False
-      return groupiszero
+        res=True if row['orders']==0 else False
+      return res
 
-    def sub_comp_tex_list(self, el_list, el_coe_list, t):
-      sub_comp_list = self.sub_comp_list(el_list, el_coe_list, t)
-      return_sub_comp_tex_list = []
-      for i in range(len(sub_comp_list[0])):
-        sub_n = sub_comp_list[0][i]
-        sub_k = sub_comp_list[1][i]
-        sub_el_list = sub_comp_list[2][i]
-        sub_el_coe_lsit = sub_comp_list[3][i]
-        sub_hg = HomotopyGroup(sub_n, sub_k)
-        return_sub_comp_tex_list.append(sub_hg.el_coe_tex(sub_el_list, sub_el_coe_lsit))
-      return return_sub_comp_tex_list
+    def sub_comp_tex_list(self,el_li,el_coe_li,t):
+      sub_comp_li=self.sub_comp_list(el_li,el_coe_li,t)
+      res=[]
+      for i in range(len(sub_comp_li[0])):
+        sub_n=sub_comp_li[0][i]
+        sub_k=sub_comp_li[1][i]
+        sub_el_li=sub_comp_li[2][i]
+        sub_el_coe_li=sub_comp_li[3][i]
+        sub_hg=HomotopyGroup(sub_n,sub_k)
+        res.append(sub_hg.el_coe_tex(sub_el_li,sub_el_coe_li))
+      return res
 
 
   class ElementLinear:
-    def __init__(self, n, k, coe_list):
-      self.n = n
-      self.k = k
-      self.coe_list = coe_list
-    
+    def __init__(self,n,k,coe_list):
+      self.n=n
+      self.k=k
+      self.coe_list=coe_list
+
     def direct_sum(self):
-      hg = HomotopyGroup(self.n, self.k)
+      hg=HomotopyGroup(self.n,self.k)
       return hg.direct_sum()
 
     def coe_cut(self):
       return self.coe_list[:self.direct_sum()]
 
     def E_coe(self):
-      M = np.array([self.coe_cut()])
-      hg = HomotopyGroup(self.n, self.k)
-      direct_sum = hg.direct_sum()
-      N = np.array([hg.E_coe(i)[0] for i in range(direct_sum)])
-      try:
-        if type((M @ N)[0]) == list:
-          Ecoe = (M @ N)[0]
-        else:
-          Ecoe = (M @ N)[0].tolist()
-        ref_list = [hg.E_coe(i)[1] for i in range(direct_sum) 
-          if self.coe_list[i] != 0 and hg.E_coe(i)[1] is not None]
-      except ValueError:
-        Ecoe = []
-        ref_list = []
-      if Ecoe == 0:
-        Ecoe = [0]
-      return Ecoe, ref_list
+      M=np.array([self.coe_cut()])
+      hg=HomotopyGroup(self.n,self.k)
+      d_sum=hg.direct_sum()
+      N=np.array([hg.E_coe(i)[0] for i in range(d_sum)])
+      try:      
+        if type((M@N)[0])==list:res=(M@N)[0]
+        else:res=(M@N)[0].tolist()
+        ref_li=[hg.E_coe(i)[1] for i in range(d_sum) if self.coe_list[i]!=0 and hg.E_coe(i)[1] is not None]
+      except ValueError:res,ref_li=[],[]
+      if res==0:res=[0]
+      return res,ref_li
 
     def rep_linear_order(self):
-      direct_sum = self.direct_sum()
-      replinorder = 0
-      hg = HomotopyGroup(self.n, self.k)
-      order_list = hg.order_list()
-      if inf in order_list:
-        replinorder = inf
-      else:
-        replinorder = max([cyclic_order(self.coe_list[i], int(order_list[i])) 
-          for i in range(direct_sum)])
-      return replinorder
+      d_sum=self.direct_sum()
+      res=0
+      hg=HomotopyGroup(self.n,self.k)
+      order_li=hg.order_list()
+      if inf in order_li:res=inf
+      else:res=max([cyclic_order(self.coe_list[i],int(order_li[i])) for i in range(d_sum)])
+      return res
 
     def linear_to_el_list(self):
-      return_el_list = []
-      return_coe_list = []
-      if np.count_nonzero(self.coe_list) == 1:
+      res_el,res_coe=[],[]
+      if np.count_nonzero(self.coe_list)==1:
         for j in range(len(self.coe_list)):
-          if self.coe_list[j] != 0:
-            hg = HomotopyGroup(self.n, self.k)
-            return_el_list = hg.rep_list(j)
-            return_coe_list = [1 if i != len(return_el_list)-1 
-              else self.coe_list[j] for i in range(len(return_el_list))]
-      return return_el_list, return_coe_list
+          if self.coe_list[j]==0:continue
+          hg=HomotopyGroup(self.n,self.k)
+          res_el=hg.rep_list(j)
+          res_coe=[1 if i!=len(res_el)-1 else self.coe_list[j] for i in range(len(res_el))]
+      return res_el,res_coe
 
 
-  class Element: 
-    def __init__(self, n, ellist=[1], el_coelist=[1]*6, total_coe=1):
-      self.n = n
-      self.ellist = ellist
-      self.el_coelist = el_coelist
-      self.total_coe = total_coe
-
+  class Element:
+    def __init__(self,n,ellist=[1],el_coelist=[1]*6,total_coe=1):
+      self.n=n
+      self.ellist=ellist
+      self.el_coelist=el_coelist
+      self.total_coe=total_coe
       self.k = k_dim(ellist)
 
     def tex(self):
-      hg = HomotopyGroup(self.n, self.k)
-      el_coe_tex = hg.el_coe_tex(self.ellist, self.el_coelist)
-      if self.total_coe == 1:
-        eltex = el_coe_tex
-      elif len(self.ellist) == 1:
-        eltex = str(self.total_coe) + el_coe_tex
-      else:
-        eltex = str(self.total_coe) + '(' + el_coe_tex + ')'
-      return eltex
+      hg=HomotopyGroup(self.n,self.k)
+      el_coe_tex=hg.el_coe_tex(self.ellist,self.el_coelist)
+      if self.total_coe==1:res = el_coe_tex
+      elif len(self.ellist)==1 and self.el_coelist[0]==1:res=str(self.total_coe)+el_coe_tex
+      else:res=str(self.total_coe)+'('+el_coe_tex+')'
+      return res
 
     def dim_list(self):
-      hg = HomotopyGroup(self.n, self.k)
+      hg=HomotopyGroup(self.n,self.k)
       return hg.el_dim_list(self.ellist)
 
     def sus_list(self):
-      dim_list = self.dim_list()
-      suslist = []
-      for (i, elem) in enumerate(self.ellist):
-        gen_query = f'select * from gen where id = "{elem}" '
+      dim_list=self.dim_list()
+      res=[]
+      for i,elem in enumerate(self.ellist):
+        gen_query=f'select*from gen where id="{elem}"'
         for row in c.execute(gen_query):
-          suslist.append(dim_list[i] - row['n'])
-      return suslist
+          res.append(dim_list[i]-row['n'])
+      return res
 
     def desus_max(self):
-      sus_list = self.sus_list()
-      if sus_list != []:
-        return_desus_max = min(sus_list)
-      else:
-        return_desus_max = 0
-      return return_desus_max
+      sus_list=self.sus_list()
+      if sus_list!=[]:res=min(sus_list)
+      else:res=0
+      return res
 
     def delete_iota(self):
-      delete_num = []
-      for (i, elem) in enumerate(self.ellist):
-        if elem == 1 and self.el_coelist[i] == 1:
-          delete_num.append(i)
-      return_ellist = [self.ellist[i] for i in range(len(self.ellist)) if i not in delete_num]
-      try:
-        return_el_coelist = [self.el_coelist[i] for i in range(len(self.ellist)) if i not in delete_num] 
-      except IndexError:
-        return_el_coelist = []
-      return return_ellist, return_el_coelist
+      del_num=[]
+      for i, elem in enumerate(self.ellist):
+        if elem==1 and self.el_coelist[i]==1 and (i>=1 or (i==0 and len(self.ellist)>=2)):del_num.append(i)
+      res_el=[self.ellist[i] for i in range(len(self.ellist)) if i not in del_num]
+      try:res_coe=[self.el_coelist[i] for i in range(len(self.ellist)) if i not in del_num] 
+      except IndexError:res_coe=[]    
+      return res_el,res_coe
+
+    def can_take_out_el_coe(self,i):
+      sus_list=self.sus_list()
+      dim_list=self.dim_list()
+      res=False
+      if dim_list[i+1] in {1,3,7}:res=True
+      if sus_list[i+1:]!=[]:
+        if min(sus_list[i+1:])>=1:res=True
+      elif len(self.ellist)==i+1:res=True
+      return res
 
 
-    def can_take_out_el_coe(self, i):
-      sus_list = self.sus_list()
-      dim_list = self.dim_list()
-      cantakeout = False
-      if dim_list[i+1] in {1,3,7}:
-        cantakeout = True
-      if sus_list[i+1:] != []:
-        if min(sus_list[i+1:]) >= 1:
-          cantakeout = True
-      elif len(self.ellist) == i+1:
-        cantakeout = True
-      return cantakeout
+
+
 
     def el_coe_out(self):
       out_coe = self.total_coe
