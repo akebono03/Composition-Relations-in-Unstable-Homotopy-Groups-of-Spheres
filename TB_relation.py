@@ -89,356 +89,301 @@ def register():
     return res
 
   class HomotopyGroup:
-    def __init__(self, n, k):
-      self.n = int(n)
-      self.k = int(k)
+    def __init__(self,n,k):
+      self.n=int(n)
+      self.k=int(k)
 
-      if k <= -1:
-        query = f'select * from sphere where n = {0} and k = {-1}'
-        query_count = f'select count( * ) from sphere where n = {0} and k = {-1}'
-      elif k+2 >= n:
-        query = f'select * from sphere where n = {n} and k = {k}'
-        query_count = f'select count( * ) from sphere where n = {n} and k = {k}'
+      if k<=-1:
+        query=f'select*from sphere where n={0} and k={-1}'
+        query_count=f'select count( * ) from sphere where n={0} and k={-1}'
+      elif k+2>=n:
+        query=f'select*from sphere where n={n} and k={k}'
+        query_count=f'select count( * ) from sphere where n={n} and k={k}'
       else:
-        query = f'select * from sphere where n = {k+2} and k = {k}'
-        query_count = f'select count( * ) from sphere where n = {k+2} and k = {k}'
+        query=f'select*from sphere where n={k+2} and k={k}'
+        query_count=f'select count( * ) from sphere where n={k+2} and k={k}'
       self.query = query
-      self.query_count = query_count
+      self.query_count= query_count
 
-    def direct_sum(self): # 直和成分の個数を与えるメソッド
-      for row in c.execute(self.query_count):
-        return_direct_sum = row['count( * )']
-      return return_direct_sum
+    def direct_sum(self):
+#直和成分の個数を与えるメソッド
+      for row in c.execute( self.query_count):
+        res=row['count( * )']
+      return res
 
-    def order_list(self): # order のリストを与えるメソッド
-      try:
-        ord = [row['orders'] if row['orders'] == inf else int(row['orders']) for row in c.execute(self.query)]
-      except:
-        ord = [0]
-      return ord
+    def order_list(self):
+#orderのリストを与えるメソッド
+      try:res=[row['orders'] if row['orders']==inf else int(row['orders']) for row in c.execute(self.query)]
+      except:res=[0]
+      return res
 
     def group_order(self):
-      grouporder = max(self.order_list())
-      return grouporder
+      res=max(self.order_list())
+      return res
 
     def max_direct_sum(self):
-      nn = [self.n*2-1, self.n-1, self.n, self.n*2-1, self.n-1]
-      kk = [self.k-self.n+2, self.k, self.k, self.k-self.n+1, self.k-1]
-      m_d_sum = [HomotopyGroup(nn[i], kk[i]).direct_sum() for i in range(5)]
+      nn=[self.n*2-1,self.n-1, self.n,self.n*2-1,self.n-1]
+      kk=[self.k-self.n+2, self.k,self.k,self.k-self.n+1, self.k-1]
+      m_d_sum=[HomotopyGroup( nn[i],kk[i]).direct_sum() for i in range(5)]
       return max(m_d_sum)
 
-    def query_id(self, id):
-      if self.k <= -1:
-        queryid = f'select * from sphere where n = {0} and k = {-1} and id = {id}'
-      elif self.k + 2 >= self.n:
-        queryid = f'select * from sphere where n = {self.n} and k = {self.k} and id = {id}'
-      else:
-        queryid = f'select * from sphere where n = {self.k + 2} and k = {self.k} and id = {id}'
-      return queryid     
+    def query_id(self,id):
+      if self.k<=-1:res=f'select*from sphere where n={0} and k={-1} and id={id}'
+      elif self.k+2>=self.n:res=f'select*from sphere where n={self.n} and k={self.k} and id={id}'
+      else:res=f'select*from sphere where n={self.k+2} and k={self.k} and id={id}'
+      return res
 
-    def rep_list(self, id): # 表示元を合成で表示する際の数字のリストを与えるメソッド
-      c.execute(self.query_id(id))
-      int_list = list(map(int, c.fetchone()['Element'].split()))
-      return int_list
+    def rep_list(self,id):
+#表示元を合成で表示する際の数字のリストを与えるメソッド
+      c.execute( self.query_id(id))
+      res=list(map(int, c.fetchone()['Element'].split()))
+      return res
 
-    def gen_coe_list(self, id): # 生成元の表示元による一次結合の係数のリストを与えるメソッド
+    def gen_coe_list(self,id):
+#生成元の表示元による一次結合の係数のリストを与えるメソッド
       for row in c.execute(self.query_id(id)):
-        int_list = list(map(int, row['gen_coe'].split()))
-      del int_list[self.direct_sum():] # リストの長さを direct_sum の数にする
-      return int_list
+        res=list(map(int, row['gen_coe'].split()))
+      del res[self.direct_sum():]
+#リストの長さをdirect_sumの数にする
+      return res
 
-    def el_dim_list(self, el_list): # 表示元の境目の次元のリストを与えるメソッド
-      el_d = [self.n]
-      for (i, elem) in enumerate(el_list):
-        gen_query = f'select * from gen where id = "{elem}" '
-        for row in c.execute(gen_query):
-          el_d.append(el_d[i] + row['k'])
-      return el_d
+    def el_dim_list(self, el_list):
+#表示元の境目の次元のリストを与えるメソッド
+      res=[self.n]
+      for i,elem in enumerate(el_list):
+        gen_query=f'select*from gen where id="{elem}"'
+        for row in c.execute( gen_query):
+          res.append( res[i]+row['k'])
+      return res
 
     def pi_tex(self):
-      return_pi_tex = f'\pi_{ {self.n + self.k} }^{ {self.n} }'
-      return return_pi_tex
+      res=f'\pi_{ {self.n+self.k} }^{ {self.n} }'
+      return res
 
     def group_structure(self):
-      group = []
+      group=[]
       for row in c.execute(self.query):
-        if row['orders'] == 0:
-          group.append('0')
-        elif row['orders'] == inf:
-          group.append('Z')
+        if row['orders']==0:group.append('0')
+        elif row['orders']==inf:group.append('Z')
         else:
-          try:
-            group.append(f"Z_{ {int(row['orders'])} }")
-          except:
-            group.append('0')
-      self_direct_sum = self.direct_sum()
-      group_gen = [self.rep_linear_tex(self.gen_coe_list(j)) for j in range(self_direct_sum)]
-      group_tex_list = [gr + '\{' + gen + '\}' for (gr, gen) in zip(group, group_gen)]
-      return_group_tex = ' \oplus '.join(group_tex_list)
+          try:group.append(f"Z_{ {int(row['orders'])} }")
+          except:group.append('0')
+      self_direct_sum= self.direct_sum()
+      group_gen= [self.rep_linear_tex( self.gen_coe_list(j)) for j in range(self_direct_sum)]
+      group_tex_list= [gr+'\{'+gen+'\}' for (gr,gen) in zip(group,group_gen)]
+      return ' \oplus '.join( group_tex_list)
 
-      return return_group_tex
+    def stable_group_structure( self):
+      group=[]
+      for row in c.execute(self.query):
+        if row['orders']==0:group.append('0')
+        elif row['orders']==inf:group.append('Z')
+        else:
+          try:group.append(f"Z_{ {int(row['orders'])} }")
+          except:group.append('0')
+      self_direct_sum= self.direct_sum()
+      gen_id_list_list= [self.rep_list(j) for j in range(self_direct_sum)]
+      group_gen=[]
+      for gen_id_list in gen_id_list_list:
+        gen_latex=''
+        for gen_id in gen_id_list:
+          gen_query= f'select*from gen where id="{gen_id}"'
+          for row in c.execute(gen_query):
+            if '{3,' in row['latex'] or '{4,' in row['latex']:gen_latex= gen_latex+' '+row['latex']+'*}'
+            elif row['id']==174:gen_latex= gen_latex+' '+row['latex'] +'_{*}'
+            else:gen_latex= gen_latex+' '+row['latex']
+        group_gen.append( gen_latex)
+      group_tex_list= [gr+'\{'+gen+'\}' for (gr,gen) in zip(group,group_gen)]
+      return ' \oplus '.join( group_tex_list)
 
-    def el_sus_list(self, el_list):
-      suslist = []
-      for (i, elem) in enumerate(el_list):
-        gen_query = f'select * from gen where id = "{elem}" '
-        for row in c.execute(gen_query):
-          suslist.append(self.el_dim_list(el_list)[i] - row['n'])
-      suslist.append(self.el_dim_list(el_list)[-1])
-      return suslist
+    def el_sus_list(self,el_list):
+      res=[]
+      for i,elem in enumerate(el_list):
+        gen_query=f'select* from gen where id="{elem}"'
+        for row in c.execute( gen_query):
+          res.append( self.el_dim_list(el_list)[i] -row['n'])
+      res.append( self.el_dim_list(el_list)[-1])
+      return res
 
-    def delete_iota(self, ellist, el_coelist):
-      delete_num = []
-      for (i, elem) in enumerate(ellist):
-        if elem == 1 and el_coelist[i] == 1 and (i >= 1 or (i==0 and len(ellist) >= 2)):
-          delete_num.append(i)
-      return_ellist = [ellist[i] for i in range(len(ellist)) if i not in delete_num]
-      return_el_coelist = [el_coelist[i] for i in range(len(ellist)) if i not in delete_num] 
-      return return_ellist, return_el_coelist
+    def delete_iota(self, el_list,el_coe_list):
+      delete_num=[]
+      for i,elem in enumerate(el_list):
+        if elem==1 and el_coe_list[i]==1 and (i>=1 or (i==0 and len(el_list)>=2)): delete_num.append(i)
+      res_el_list=[el_list[i] for i in range(len(el_list)) if i not in delete_num]
+      res_el_coe_list= [el_coe_list[i] for i in range(len(el_list)) if i not in delete_num]
+      return res_el_list, res_el_coe_list
 
-    def can_take_out_el_coe(self, el_list, i):
-      sus_list = self.el_sus_list(el_list)
-      dim_list = self.el_dim_list(el_list)
-      cantakeout = False
-      if dim_list[i+1] in {1,3,7}:
-        cantakeout = True
-      elif sus_list[i+1:] != []:
-        if min(sus_list[i+1:]) >= 1:
-          cantakeout = True
-      elif len(el_list) == i+1:
-        cantakeout = True
-      return cantakeout
+    def can_take_out_el_coe( self,el_list,i):
+      sus_list= self.el_sus_list(el_list)
+      dim_list= self.el_dim_list(el_list)
+      res=False
+      if dim_list[i+1] in {1,3,7}:res=True
+      elif sus_list[i+1:]!=[]:
+        if min(sus_list[i+1:]) >=1:res=True
+      elif len(el_list)==i+1:res=True
+      return res
 
-    def el_coe_out(self, el_list, el_coe_list):
-      out_coe = 1
+    def el_coe_out(self, el_list,el_coe_list):
+      out_coe=1
       for i in range(len(el_list)):
-        if self.can_take_out_el_coe(el_list, i):
-          out_coe = out_coe * el_coe_list[i]
-          el_coe_list[i] = 1
-      (after_el_list, after_el_coe_list) = self.delete_iota(el_list, el_coe_list)
-      return after_el_list, after_el_coe_list, out_coe
+        if self.can_take_out_el_coe(el_list,i):
+          out_coe= out_coe*el_coe_list[i]
+          el_coe_list[i]=1
+      res_el_list, res_el_coe_list= self.delete_iota(el_list, el_coe_list)
+      return res_el_list, res_el_coe_list,out_coe
 
-    def sub_comp(self, el_list, el_coe_list, i, j):
-      sub_el_list = el_list[i:i+j]
-      sub_el_coe_list = el_coe_list[i:i+j]
-      return sub_el_list, sub_el_coe_list 
+    def sub_comp(self,el_list, el_coe_list,i,j):
+      res_el=el_list[i:i+j]
+      res_coe=el_coe_list[i:i+j]
+      return res_el,res_coe
 
-    def sub_comp_list(self, ellist, el_coelist, t):
-      el_list = ellist
-      el_coe_list = el_coelist
-      el_dim_list = self.el_dim_list(el_list)
+    def sub_comp_list(self, elli,el_coeli,t):
+      el_li=elli
+      el_coe_li=el_coeli
+      el_dim_li= self.el_dim_list(el_li)
+      res_n,res_k=[],[]
+      res_el,res_coe=[],[]
+      bin_t=bin(t)[2:]
+      bin_t0='0'*(len(el_li) -1-len(bin_t))+bin_t+'1'
+      j=1
+      for i in range(len(el_li)):
+        if i==0:res_n.append( el_dim_li[0])
+        elif bin_t0[i-1]=='1':res_n.append( el_dim_li[i])
+        if bin_t0[i]=='1':
+          sub_comp= self.sub_comp(el_li, el_coe_li,i-j+1,j)
+          res_el.append( sub_comp[0])
+          res_coe.append( sub_comp[1])
+          j=1
+        else:j+=1
+      for i in range(len(res_n)):
+        if i<= len(res_n)-2:res_k.append( res_n[i+1]-res_n[i])
+        else:res_k.append( el_dim_li[-1]-res_n[-1])
+      return res_n,res_k, res_el,res_coe
 
-      subcomplist_n = []
-      subcomplist_k = []
-      subcomplist_el = []
-      subcomplist_el_coe = []
-      bin_t = bin(t)[2:]
-      bin_t0 = '0'*(len(el_list)-1 - len(bin_t)) + bin_t + '1'
-      j = 1
-      for i in range(len(el_list)):
-        if i == 0:
-          subcomplist_n.append(el_dim_list[0])
-        elif bin_t0[i-1] == '1':
-          subcomplist_n.append(el_dim_list[i])
-        if bin_t0[i] == '1':
-          sub_comp = self.sub_comp(el_list, el_coe_list, i-j+1, j)
-          subcomplist_el.append(sub_comp[0])
-          subcomplist_el_coe.append(sub_comp[1])
-          j = 1
-        else:
-          j = j + 1
-      for i in range(len(subcomplist_n)):
-        if i <= len(subcomplist_n)-2:
-          subcomplist_k.append(subcomplist_n[i+1]-subcomplist_n[i])
-        else:
-          subcomplist_k.append(el_dim_list[-1]-subcomplist_n[-1])
-      return subcomplist_n, subcomplist_k, subcomplist_el, subcomplist_el_coe
-
-    def el_tex(self, el_list): # 表示元の tex 表示を与えるメソッド
-      el_dim_list = self.el_dim_list(el_list)
-      tex = ''
-      sq_count = 1
-      for (i, elem) in enumerate(el_list):
-        gen_query = f'select * from gen where id = "{elem}" '
+    def el_tex(self,el_li):
+#表示元のtex表示を与えるメソッド
+      el_dim_li= self.el_dim_list(el_li)
+      res=''
+      sq_cnt=1
+      for i,elem in enumerate(el_li):
+        gen_query=f'select*from gen where id="{elem}"'
         for row in c.execute(gen_query):
-          if row['kinds'] == 0:
-            if el_dim_list[i] < row['n']: # row[5] = n 
-              tex = tex + '{' + row['latex'] + f'_{ {el_dim_list[i]} }' + '(Not Defined)}'
-            elif i==0 or el_list[i-1] != el_list[i]: # 一番最初か、前の id と違うとき、カウントを１にする。
-              sq_count = 1
-            else: # 前の id と同じときにカウントを＋１
-              sq_count = sq_count + 1 
-            if i == len(el_list)-1: # 最後のときに tex を追加
-              if el_dim_list[i] >= row['n']:
-                if '{3,' in row['latex']:
-                  tex = tex + '{' + row['latex'] + f'{el_dim_list[i-sq_count+1]}' + '} }'
-                else:
-                  tex = tex + '{' + row['latex'] + f'_{ {el_dim_list[i-sq_count+1]} }' + '}'
-                if sq_count >=2:
-                  tex = tex.removesuffix('}') + f'^{ {sq_count} }' + '}'
-            elif el_list[i] != el_list[i+1]: # 次の id と違うときに tex を追加
-              if el_dim_list[i] >= row['n']:
-                if '{3,' in row['latex']:
-                  tex = tex + '{' + row['latex'] + f'{el_dim_list[i-sq_count+1]}' + '} }'
-                else:
-                  tex = tex + '{' + row['latex'] + f'_{ {el_dim_list[i-sq_count+1]} }' + '}'
-                if sq_count >=2: # カウントの数をべきにする。
-                  tex = tex.removesuffix('}') + f'^{ {sq_count} }' + '}'
-            # 次の id と同じ場合は何もしない
-          elif el_dim_list[i] < row['n']:
-            tex = tex + '{' + '\Sigma' + f"^{ {el_dim_list[i] - row['n']} }" + row['latex'] + '(Not Defined)}'
-          elif el_dim_list[i] == row['n']:
-            tex = tex + '{' + row['latex'] + '}'
-          elif el_dim_list[i] == row['n'] + 1:
-            tex = tex + '{' + '\Sigma ' + row['latex'] + '}'
-          else:
-            tex = tex + '{' + '\Sigma' + f"^{ {el_dim_list[i] - row['n']} }" + row['latex'] + '}'
+          if row['kinds']==0:
+            if el_dim_li[i]< row['n']:res+='{'+row['latex'] +f'_{ {el_dim_li[i]} }'+'(Not Defined)}'
+            elif i==0 or el_li[i-1]!=el_li[i]:sq_cnt=1
+#一番最初か、前のidと違うとき、カウントを１にする。
+            else:sq_cnt+=1
+#前のidと同じときにカウントを＋１
+            if i== len(el_li)-1:
+#最後のときにtexを追加
+              if el_dim_li[i] >=row['n']:
+                if '{3,' in row['latex'] or '{4,' in row['latex']:res+='{' +row['latex'] +f'{el_dim_li[i-sq_cnt+1]}' +'} }'
+                else:res+='{' +row['latex']+f'_{ {el_dim_li[i-sq_cnt+1]} }'+'}'
+                if sq_cnt>=2:res= res.removesuffix('}')+f'^{ {sq_cnt} }'+'}'
+            elif el_li[i]!= el_li[i+1]:
+#次のidと違うときにtexを追加
+              if el_dim_li[i] >=row['n']:
+                if '{3,' in row['latex'] or '{4,' in row['latex']:res+='{' +row['latex'] +f'{el_dim_li[i-sq_cnt+1]}'+'} }'
+                else:res+='{'+ row['latex']+f'_{ {el_dim_li[i-sq_cnt+1]} }'+'}'
+                if sq_cnt>=2:res= res.removesuffix('}')+f'^{ {sq_cnt} }'+'}'
+#カウントの数をべきにする。
+#次のidと同じ場合は何もしない
+          elif el_dim_li[i] <row['n']:res+='{'+' E '+f"^{ {el_dim_li[i]-row['n']} }"+row['latex']+'(Not Defined)}'
+          elif el_dim_li[i] ==row['n']:res+='{' +row['latex']+'}'
+          elif el_dim_li[i]== row['n']+1:res+='{'+' E '+row['latex']+'}'
+          else:res+='{'+' E '+f"^{ {el_dim_li[i]-row['n']} }"+row['latex']+'}'
+      if 0 in el_li:res='0'
+      return res
 
-      if 0 in el_list:
-        tex = '0'
-
-      return tex
-
-    def el_coe_tex(self, ellist, el_coelist=[1]*6):
-      el_dim_list = self.el_dim_list(ellist)
-      (el_list, el_coe_list) = self.delete_iota(ellist, el_coelist)
-      len_el_list = len(el_list)
-      tex = ''
-      sq_count = 1
-      for (i, elem) in enumerate(el_list):
-        gen_query = f'select * from gen where id = "{elem}" '
+    def el_coe_tex(self,elli,el_coeli=[1]*6):
+      el_li,el_coe_li=self.delete_iota(elli,el_coeli)
+      el_dim_li=self.el_dim_list(el_li)
+      len_el_li=len(el_li)
+      res=''
+      sq_cnt=1
+      for i,elem in enumerate(el_li):
+        gen_query=f'select*from gen where id="{elem}"'
         for row in c.execute(gen_query):
-          if row['kinds'] == 0:
-            if el_dim_list[i] < row['n']: # row[5] = n
-              if el_coe_list[i] == 1:
-                tex = tex + '{' + row['latex'] + f'_{ {el_dim_list[i]} }' + '(Not Defined)}'
-              elif len_el_list == 1:
-                tex = tex + f'{el_coe_list[i]}' + \
-                  '{' + row['latex'] + f'_{ {el_dim_list[i]} }' + '(Not Defined)}'
+          if row['kinds']==0:
+            if el_dim_li[i]<row['n']:
+              if el_coe_li[i]==1:res+='{'+row['latex']+f'_{ {el_dim_li[i]} }'+'(Not Defineda)}'
+              elif len_el_li==1:res+=f'{el_coe_li[i]}'+'{'+row['latex']+f'_{ {el_dim_li[i]} }'+'(Not Defineda)}'
+              else:res+='('+f'{el_coe_li[i]}'+'{'+row['latex']+f'_{ {el_dim_li[i]} }'+'(Not Defineda)})'
+            elif i==0 or el_li[i-1]!=el_li[i] or (el_li[i-1]==el_li[i] and el_coe_li[i]!=1):sq_cnt=1
+#一番最初か、前のidと違うとき、カウントを１にする。
+            else:sq_cnt+=1;el_coe_li[i]=el_coe_li[i-1]
+#前のidと同じときにカウントを＋1
+            if i==len_el_li-1:
+#最後のときにtexを追加
+              # if el_dim_li[i]>=row['n']:
+              if el_dim_li[i]<row['n']:continue
+              if '{3,' in row['latex'] or '{4,' in row['latex']:
+                if el_coe_li[i]==1:res+='{'+row['latex']+f'{el_dim_li[i-sq_cnt+1]}'+'} }'
+                elif len_el_li==1:res+=f'{el_coe_li[i]}'+'{'+row['latex']+f'{el_dim_li[i-sq_cnt+1]}'+'} }'
+                else:res+='('+f'{el_coe_li[i]}'+'{'+row['latex']+f'{el_dim_li[i-sq_cnt+1]}'+'} })'
               else:
-                tex = tex + '(' + f'{el_coe_list[i]}' + \
-                  '{' + row['latex'] + f'_{ {el_dim_list[i]} }' + '(Not Defined)})'
-            elif i==0 or el_list[i-1] != el_list[i] or (el_list[i-1] == el_list[i] and el_coe_list[i] != 1): # 一番最初か、前の id と違うとき、カウントを１にする。
-              sq_count = 1
-            else: # 前の id と同じときにカウントを＋１
-              sq_count = sq_count + 1 
-              el_coe_list[i] = el_coe_list[i-1]
-            if i == len_el_list-1: # 最後のときに tex を追加
-              if el_dim_list[i] >= row['n']:
-                if '{3,' in row['latex']:
-                  if el_coe_list[i] == 1:
-                    tex = tex + '{' + row['latex'] + f'{el_dim_list[i-sq_count+1]}' + '} }'
-                  elif len_el_list == 1:
-                    tex = tex + f'{el_coe_list[i]}' + \
-                      '{' + row['latex'] + f'{el_dim_list[i-sq_count+1]}' + '} }'
-                  else:
-                    tex = tex + '(' + f'{el_coe_list[i]}' + \
-                      '{' + row['latex'] + f'{el_dim_list[i-sq_count+1]}' + '} })'
-                else:
-                  if el_coe_list[i] == 1:
-                    tex = tex + '{' + row['latex'] + f'_{ {el_dim_list[i-sq_count+1]} }' + '}'
-                  elif len_el_list == 1:
-                    tex = tex + f'{el_coe_list[i]}' + \
-                      '{' + row['latex'] + f'_{ {el_dim_list[i-sq_count+1]} }' + '}'
-                  else:
-                    tex = tex + '(' + f'{el_coe_list[i]}' + \
-                      '{' + row['latex'] + f'_{ {el_dim_list[i-sq_count+1]} }' + '})'
-                if sq_count >=2:
-                  if tex[-1] == ')':
-                    tex = tex.removesuffix('})') + f'^{ {sq_count} }' + '})'
-                  else:
-                    tex = tex.removesuffix('}') + f'^{ {sq_count} }' + '}'
-            elif el_list[i] != el_list[i+1] or (el_list[i] == el_list[i+1] and el_coe_list[i+1] != 1): # 次の id と違うときに tex を追加
-              if el_dim_list[i] >= row['n']:
-                if '{3,' in row['latex']:
-                  if el_coe_list[i] == 1:
-                    tex = tex + '{' + row['latex'] + f'{el_dim_list[i-sq_count+1]}' + '} }'
-                  elif len_el_list == 1:
-                    tex = tex + f'{el_coe_list[i]}' + \
-                      '{' + row['latex'] + f'{el_dim_list[i-sq_count+1]}' + '} }'
-                  else:
-                    tex = tex + '(' + f'{el_coe_list[i]}' + \
-                      '{' + row['latex'] + f'{el_dim_list[i-sq_count+1]}' + '} })'
-                else:
-                  if el_coe_list[i] == 1:
-                    tex = tex + '{' + row['latex'] + f'_{ {el_dim_list[i-sq_count+1]} }' + '}'
-                  elif len_el_list == 1:
-                    tex = tex + f'{el_coe_list[i]}' + \
-                      '{' + row['latex'] + f'_{ {el_dim_list[i-sq_count+1]} }' + '}'
-                  else:
-                    tex = tex + '(' + f'{el_coe_list[i]}' + \
-                      '{' + row['latex'] + f'_{ {el_dim_list[i-sq_count+1]} }' + '})'
-                if sq_count >=2: # カウントの数をべきにする。
-                  if tex[-1] == ')':
-                    tex = tex.removesuffix('})') + f'^{ {sq_count} }' + '})'
-                  else:
-                    tex = tex.removesuffix('}') + f'^{ {sq_count} }' + '}'
-            
-            # 次の id と同じ場合は何もしない
-          elif el_dim_list[i] < row['n']:
-            if el_coe_list[i] == 1:
-              tex = tex + '{' + '\Sigma' + f"^{ {el_dim_list[i] - row['n']} }" + row['latex'] + '(Not Defined)}'
-            elif len_el_list == 1:
-              tex = tex + f'{el_coe_list[i]}' + \
-                '{' + '\Sigma' + f"^{ {el_dim_list[i] - row['n']} }" + row['latex'] + '(Not Defined)}'
-            else:
-              tex = tex + '(' + f'{el_coe_list[i]}' + \
-                '{' + '\Sigma' + f"^{ {el_dim_list[i] - row['n']} }" + row['latex'] + '(Not Defined)})'
-          elif el_dim_list[i] == row['n']:
-            if el_coe_list[i] == 1:
-              tex = tex + '{' + row['latex'] + '}'
-            elif len_el_list == 1:
-              tex = tex + f'{el_coe_list[i]}' + \
-                '{' + row['latex'] + '}'
-            else:
-              tex = tex + '(' + f'{el_coe_list[i]}' + \
-                '{' + row['latex'] + '})'
-          elif el_dim_list[i] == row['n'] + 1:
-            if el_coe_list[i] == 1:
-              tex = tex + '{' + '\Sigma ' + row['latex'] + '}'
-            elif len_el_list == 1:
-              tex = tex + f'{el_coe_list[i]}' + \
-                '{' + '\Sigma ' + row['latex'] + '}'
-            else:
-              tex = tex + '(' + f'{el_coe_list[i]}' + \
-                '{' + '\Sigma ' + row['latex'] + '})'
+                if el_coe_li[i]==1:res+='{'+row['latex']+f'_{ {el_dim_li[i-sq_cnt+1]} }'+'}'
+                elif len_el_li==1:res+=f'{el_coe_li[i]}'+'{'+row['latex']+f'_{ {el_dim_li[i-sq_cnt+1]} }'+'}'
+                else:res+='('+f'{el_coe_li[i]}'+'{'+row['latex']+f'_{ {el_dim_li[i-sq_cnt+1]} }'+'})'
+              if sq_cnt<2:continue
+              if res[-1]==')':res=res.removesuffix('})')+f'^{ {sq_cnt} }'+'})'
+              else:res=res.removesuffix('}')+f'^{ {sq_cnt} }'+'}'
+            elif el_li[i]!=el_li[i+1] or (el_li[i]==el_li[i+1] and el_coe_li[i+1]!=1):
+#次のidと違うときにtexを追加
+              if el_dim_li[i]<row['n']:continue
+              if '{3,' in row['latex'] or '{4,' in row['latex']:
+                if el_coe_li[i]==1:res+='{'+row['latex']+f'{el_dim_li[i-sq_cnt+1]}'+'} }'
+                elif len_el_li==1:res+=f'{el_coe_li[i]}'+'{'+row['latex']+f'{el_dim_li[i-sq_cnt+1]}'+'} }'
+                else:res+='('+f'{el_coe_li[i]}'+'{'+row['latex']+f'{el_dim_li[i-sq_cnt+1]}'+'} })'
+              else:
+                if el_coe_li[i]==1:res+='{'+row['latex']+f'_{ {el_dim_li[i-sq_cnt+1]} }'+'}'
+                elif len_el_li==1:res+=f'{el_coe_li[i]}'+'{'+row['latex']+f'_{ {el_dim_li[i-sq_cnt+1]} }'+'}'
+                else:res+='('+f'{el_coe_li[i]}'+'{'+row['latex']+f'_{ {el_dim_li[i-sq_cnt+1]} }'+'})'
+              if sq_cnt<2:continue
+# カウントの数をべきにする。
+              if res[-1]==')':res=res.removesuffix('})')+f'^{ {sq_cnt} }'+'})'
+              else:res=res.removesuffix('}')+f'^{ {sq_cnt} }'+'}'
+#次のidと同じ場合は何もしない
+          elif el_dim_li[i]<row['n']:
+            if el_coe_li[i]==1:res+='{'+' E '+f"^{ {el_dim_li[i]-row['n']} }"+row['latex']+'(Not Defined)}'
+            elif len_el_li==1:res+=f'{el_coe_li[i]}'+'{'+' E '+f"^{ {el_dim_li[i]-row['n']} }"+row['latex']+'(Not Defined)}'
+            else:res+='('+f'{el_coe_li[i]}'+'{'+' E '+f"^{ {el_dim_li[i]-row['n']} }"+row['latex']+'(Not Defined)})'
+          elif el_dim_li[i]==row['n']:
+            if el_coe_li[i]==1:res+='{'+row['latex']+'}'
+            elif len_el_li==1:res+=f'{el_coe_li[i]}'+'{'+row['latex']+'}'
+            else:res+='('+f'{el_coe_li[i]}'+'{'+row['latex']+'})'
+          elif el_dim_li[i]==row['n']+1:
+            if el_coe_li[i]==1:res+='{'+' E '+row['latex']+'}'
+            elif len_el_li==1:res+=f'{el_coe_li[i]}'+'{'+' E '+row['latex']+'}'
+            else:res+='('+f'{el_coe_li[i]}'+'{'+' E '+row['latex']+'})'
           else:
-            if el_coe_list[i] == 1:
-              tex = tex + '{' + '\Sigma' + f"^{ {el_dim_list[i] - row['n']} }" + row['latex'] + '}'
-            elif len_el_list == 1:
-              tex = tex + f'{el_coe_list[i]}' + \
-                '{' + '\Sigma' + f"^{ {el_dim_list[i] - row['n']} }" + row['latex'] + '}'
-            else:
-              tex = tex + '(' + f'{el_coe_list[i]}' + \
-                '{' + '\Sigma' + f"^{ {el_dim_list[i] - row['n']} }" + row['latex'] + '})'
-      return tex
+            if el_coe_li[i]==1:res+='{'+' E '+f"^{ {el_dim_li[i]-row['n']} }"+row['latex']+'}'
+            elif len_el_li==1:res+=f'{el_coe_li[i]}'+'{'+' E '+f"^{ {el_dim_li[i]-row['n']} }"+row['latex']+'}'
+            else:res+='('+f'{el_coe_li[i]}'+'{'+' E '+f"^{ {el_dim_li[i]-row['n']} }"+row['latex']+'})'
+      return res
 
-    def rep_linear_tex(self, coe, totalcoe=1):
-      rep_coe = [c * totalcoe for c in coe]
-      order_list = self.order_list()
-      direct_sum = self.direct_sum()
-      if order_list == [0]:
-        rep_lin = '0'
-      elif rep_coe != []:
-        symbol_list = ['x00', 'x01', 'x02', 'x03', 'x04', 'x05', 'x06', 'x07', 'x08', 'x09', 'x10', 'x11']
-        X = sp.Matrix([sp.Symbol(symbol_list[i]) for i in range(direct_sum)])
+    def rep_linear_tex(self,coe,totalcoe=1):
+      rep_coe=[c*totalcoe for c in coe]
+      ord_li=self.order_list()
+      direct_sum=self.direct_sum()
+      if ord_li==[0]:res='0'
+      elif rep_coe!=[]:
+        symbol_li=['x00','x01','x02','x03','x04','x05','x06','x07','x08','x09','x10','x11']
+        X=sp.Matrix([sp.Symbol(symbol_li[i]) for i in range(direct_sum)])
         def mod_coe(i):
           try:
-            if order_list[i] == inf:
-              return rep_coe[i]
-            elif rep_coe[i] % order_list[i] > order_list[i] /2:
-              return rep_coe[i] % order_list[i] - order_list[i]
-            else:
-              return rep_coe[i] % order_list[i]
-          except:# IndexError:
-            return rep_coe[i]# i
-        A = sp.Matrix([mod_coe(i) for i in range(direct_sum)])
-        rep_lin = str(Dot(X, A)).replace('*x', 'x')
+            if ord_li[i]==inf: return rep_coe[i]
+            elif rep_coe[i]%ord_li[i]>ord_li[i]/2: return rep_coe[i]%ord_li[i]-ord_li[i]
+            else: return rep_coe[i]%ord_li[i]
+          except: return rep_coe[i]
+        A=sp.Matrix([mod_coe(i) for i in range(direct_sum)])
+        res=str(Dot(X,A)).replace('*x','x')
         for i in range(direct_sum):
-          rep_lin = rep_lin.replace(symbol_list[i], self.el_tex(self.rep_list(i)))
-      else:
-        rep_lin = ''
-      return rep_lin
+          res=res.replace(symbol_li[i],self.el_tex(self.rep_list(i)))
+      else:res=''
+      return res
+
+
 
     def P_coe(self, id):
       int_list = []
