@@ -1855,7 +1855,7 @@ def register():
   else:
     split_el_lili,split_coe_lili=el0.el_split(symbols0)
     el_list0_0=split_el_lili[0]
-  #   coe_list0_0=split_coe_lili[0]
+    coe_list0_0=split_coe_lili[0]
 
   k=k_dim(el_list0_0)
 
@@ -1876,7 +1876,7 @@ def register():
   if display_mode=='stable': n=k+2
 
   hg0=HomotopyGroup(n,k)
-  # el0_0=Element(n,el_list0_0,coe_list0_0,total_coe0)
+  el0_0=Element(n,el_list0_0,coe_list0_0,total_coe0)
 
   # regi_coe_list=[int(request.form[f'regi_coe_list[{i}]']) for i in range(12)]
   # regi_mod_coe_list=[int(request.form[f'regi_mod_coe_list[{i}]']) for i in range(12)]
@@ -2079,7 +2079,7 @@ def register():
       #   split_el=Element(n,split_el_list,split_coe_list)
       #   disp0_list.append(split_el.tex())
       disp0='+'.join(disp0_list)
-  # else: disp0=el0_0.tex()
+  else: disp0=el0_0.tex()
 
 # case with Hopf map
   for i,elem in enumerate(el_list1_0):
