@@ -1936,6 +1936,35 @@ def register():
     else:
       relation_tex_list.append('')
       reference_tex_list.append('')
+  elif '{' not in symbols0 and '[' not in symbols0 and display_mode!='Group-registration':
+    if '+' in symbols0:
+      relation_tex_list1,reference_tex_list1=el0.el_sum(symbols0)
+      relation_tex_list.extend(relation_tex_list1)
+      reference_tex_list.extend(reference_tex_list1)
+    else:
+      relation_tex_list,reference_tex_list,return_coe_list=el0.deformation_relation(coe_list0)
+      if return_coe_list==[]:
+        el0_subcomp0=el0.sub_comp(0,2)
+        el0_0=Element(n,el0_subcomp0[0],el0_subcomp0[1])
+        hg0_0=HomotopyGroup(n,el0_0.k)
+        el0_0_has_relation=el0_0.has_relation()
+        try:
+          hg0_0_rep_coe_to_el_list=hg0_0.rep_coe_to_el_list(el0_0_has_relation[1])
+          el0_0_list=[]
+          for el in hg0_0_rep_coe_to_el_list[0]:
+            for i in range(2,len(el0.ellist)):
+              el.append(el0.ellist[i])
+            el0_0_list.append(el)
+          np_array=[]
+          for el0_0_list_el in el0_0_list:
+            el0_1=Element(n,el0_0_list_el)
+            el0_1_deformation_relation=el0_1.deformation_relation()
+            np_array.append(np.array(el0_1_deformation_relation[2]))
+          pass
+          
+          sum_coe=sum(np_array)
+          relation_tex_list.append(hg.rep_linear_tex(sum_coe))
+        except:pass
 
   well_def1=''
   well_def2=''
