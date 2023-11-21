@@ -22,9 +22,9 @@
     <p>
         <label><input type="radio" name="display_mode" value="relation" checked>Relation</label> &nbsp;
         {% if display_mode == "E-image" %}
-        <label><input type="radio" name="display_mode" value="E-image" checked>\(\Sigma\)-image</label> &nbsp;
+        <label><input type="radio" name="display_mode" value="E-image" checked>E-image</label> &nbsp;
         {% else %}
-        <label><input type="radio" name="display_mode" value="E-image">\(\Sigma\)-image</label> &nbsp;
+        <label><input type="radio" name="display_mode" value="E-image">E-image</label> &nbsp;
         {% endif %}
         {% if display_mode == "H-image" %}
         <label><input type="radio" name="display_mode" value="H-image" checked>H-image</label> &nbsp;
@@ -32,9 +32,9 @@
         <label><input type="radio" name="display_mode" value="H-image">H-image</label> &nbsp;
         {% endif %}
         {% if display_mode == "P-image" %}
-        <label><input type="radio" name="display_mode" value="P-image" checked>P-image</label> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        <label><input type="radio" name="display_mode" value="P-image" checked>\(\Delta\)-image</label> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
         {% else %}
-        <label><input type="radio" name="display_mode" value="P-image">P-image</label> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        <label><input type="radio" name="display_mode" value="P-image">\(\Delta\)-image</label> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
         {% endif %}
     </p>
 
@@ -231,9 +231,9 @@
 <p> \( \pi_{ {{n+k}} }^{ {{n}} } = {{ group_tex }} \) </p>
 
 {% if display_mode == 'P-image' %}
-    <p> \( \overset{P}{\longrightarrow} \ \pi_{ {{n+k-2}} }^{ {{((n-1)/2)|int}} } = {{ group1_tex }} \) </p>
+    <p> \( \overset{\Delta}{\longrightarrow} \ \pi_{ {{n+k-2}} }^{ {{((n-1)/2)|int}} } = {{ group1_tex }} \) </p>
 {% elif display_mode == 'E-image' %}
-    <p> \( \overset{\Sigma}{\longrightarrow} \ \pi_{ {{n+k+1}} }^{ {{n+1}} } = {{ group1_tex }} \) </p>
+    <p> \( \overset{E}{\longrightarrow} \ \pi_{ {{n+k+1}} }^{ {{n+1}} } = {{ group1_tex }} \) </p>
 {% elif display_mode == 'H-image' %}
     <p> \( \overset{H}{\longrightarrow} \ \pi_{ {{n+k}} }^{ {{2*n-1}} } = {{ group1_tex }} \) </p>
 {% endif %}
