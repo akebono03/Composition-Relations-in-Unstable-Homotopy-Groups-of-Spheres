@@ -49,14 +49,14 @@ def register():
 
   db_name='sphere.db'
   conn=sqlite3.connect(db_name)
-  df=pd.read_csv('./sphere.csv')
-  df.to_sql('sphere', conn, if_exists='replace')
-  df=pd.read_csv('./HyoujiGen.csv')
-  df.to_sql('gen', conn, if_exists='replace')
-  df=pd.read_csv('./TBtable.csv')
-  df.to_sql('TBtable', conn, if_exists='replace')
-  df=pd.read_csv('./sphere_relation2.csv')
-  df.to_sql('sphere_relation', conn, if_exists='replace')
+  # df=pd.read_csv('./sphere.csv')
+  # df.to_sql('sphere', conn, if_exists='replace')
+  # df=pd.read_csv('./HyoujiGen.csv')
+  # df.to_sql('gen', conn, if_exists='replace')
+  # df=pd.read_csv('./TBtable.csv')
+  # df.to_sql('TBtable', conn, if_exists='replace')
+  # df=pd.read_csv('./sphere_relation2.csv')
+  # df.to_sql('sphere_relation', conn, if_exists='replace')
   c=conn.cursor()
 
   inf=float('inf')
