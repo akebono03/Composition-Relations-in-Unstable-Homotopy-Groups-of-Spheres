@@ -994,48 +994,44 @@ def register():
       return i_li,j_li,sub_ellili,sub_el_coelili,res_sub_ref_li,break_flg
 
     def total_coe_times_sub_comp(self):
-      res_sub_tex=[]
-      res_sub_ref=[]
-      res_coe=[]
-      flg=False
+      res_sub_tex,res_sub_ref,res_coe= [],[],[]
 
 #########################################################
-      el1_el_coe_out=self.el_coe_out()
-      elli2=el1_el_coe_out[0]
-      tot_coe2=el1_el_coe_out[2]
-      rep_coe_li2=el1_el_coe_out[1]
-
+# 係数を外へ出して、そのelementをel2とする
+      elli2,rep_coe_li2,tot_coe2= self.el_coe_out()
       el2=Element(self.n,elli2,rep_coe_li2,tot_coe2)
       el2_el_to_lin_coe=el2.element_to_linear_coe()
       el2_dim_li=el2.dim_list()
       if el2_el_to_lin_coe!=[]:
+# 生成元のlinearであれば、それからtexに変換
         hg2=HomotopyGroup(self.n,self.k)
         res_sub_tex.append(hg2.rep_linear_tex(el2_el_to_lin_coe,tot_coe2))
+# 生成元でなければ、elementからtexに変換
       else:res_sub_tex.append(el2.tex())
-      
 #########################################################
 
       if tot_coe2>=2:
         # if el2.el_dim_list()[i] in [3,7]:
         #   pass
         # else:
-        el1_el_coe_out = self.el_coe_out()
+        # el1_el_coe_out = self.el_coe_out()
+# tot_coe2>=2のとき(2.1)をreferenceに追加、そうでなければtexを削除
         res_sub_ref.append('(2.1), \ k(\\alpha\\beta)=\\alpha(k\\beta)' 
             + ', \ k(\\alpha E \\beta)=(k\\alpha) E \\beta'
             + ', \ \ Lem4.5, \ (k\iota_{n-1})\\beta = k\\beta \ for \ \\beta \in \pi_{i-1}(S^{n-1})'
             + ', \ n = 2, 4, 8' )
-      else:res_sub_tex.pop(-1) 
+      else:res_sub_tex.pop(-1)
+
+      is_zero=False
       for i in range(len(elli2)):
         for j in range(1,len(elli2)-i+1):
-        # for j in range(1, len(ellist2)-i-1):
-          # ellist3 = el2.sub_comp(i, j)[0]
-          # rep_coe_list3 = el2.sub_comp(i, j)[1]
-          # print(i, j, len(ellist2)-i+1, ellist2, 'qqq')
           elli3,rep_coe_li3=el2.sub_comp(i,j)
           n3=el2_dim_li[i]
           k3=el2_dim_li[i+j]-el2_dim_li[i]
+# n3,k3:sub_comp(i,j)のn,k
           sub_el3=Element(n3,elli3,rep_coe_li3)
-          sub_el3_tot_coe_to_sub_comp_ij=sub_el3.total_coe_to_sub_comp(i, j)
+          sub_el3_tot_coe_to_sub_comp_ij= sub_el3.total_coe_to_sub_comp(i,j)
+# sub_el3_tot_coe_to_sub_comp_ij:sub_comp(i,j)にtot_coeを掛けられるかどうか
           sub_el3_el_ord=sub_el3.element_order()
           sub_el3_tex=sub_el3.tex()
           sub_hg3=HomotopyGroup(n3,k3)
@@ -1043,12 +1039,14 @@ def register():
 
           try:
             if sub_el3_tot_coe_to_sub_comp_ij and tot_coe2%sub_el3_el_ord==0:
+# tot_coe2がsub_comp(i,j)のorderの倍数のとき
               res_sub_tex.append('0')
               if sub_el3_el_ord==1:res_sub_ref.append(f'{sub_el3_tex} = 0')
               else:res_sub_ref.append(f'{sub_el3_el_ord} {sub_el3_tex} = 0')
           except:pass
           try:
             if sub_el3_tot_coe_to_sub_comp_ij and tot_coe2%sub_hg3_gr_ord==0:
+# tot_coe2がsub_comp(i,j)を含む群のorderの倍数のとき
               res_sub_tex.append('0')
               res_sub_ref.append(f'{sub_hg3_gr_ord} \pi_{ {n3}+{k3} }^{n3} = 0')
             else:pass
@@ -1056,49 +1054,49 @@ def register():
           if len(res_sub_tex)>=2:
             try:
               if res_sub_tex[-1]==res_sub_tex[-2]:
+# res_sub_texがかぶっている場合は削除する
                 res_sub_tex.pop(-1)
                 res_sub_ref.pop(-1)
             except IndexError:pass
           if '0' in res_sub_tex:
+# 結果が0になる場合
             hg = HomotopyGroup(self.n,self.k)
             res_coe=[0]*hg.direct_sum()              
-            flg=True
+            is_zero=True
             break
-        if flg:break
-      return res_sub_tex,res_sub_ref,res_coe,flg
+        if is_zero:break
+      return res_sub_tex,res_sub_ref,res_coe,is_zero
 
     def total_coe_times_sub_comp_is_zero(self,totalcoe=1):
-      res_sub_tex=[]
-      res_sub_ref=[]
-      res_coe=[]
-      flg=False
-      for t in range(2**(len(self.ellist)-1)):
-        t_n_li,t_k_li,t_el_li,t_el_coe_li=self.sub_comp_list(t)
+      res_sub_tex,res_sub_ref,res_coe= [],[],[]
+      is_zero=False
+      for t in range(1<<(len(self.ellist)-1)):
+# 合成の境目をビット全探索
+        tn_li, tk_li, tel_li, tel_coe_li= self.sub_comp_list(t)
         i_li,j_li=[],[]
-        sub_ellili=[]
-        sub_el_coelili=[]
-        for ii,t_n,t_k,t_el,t_el_coe in zip(range(len(t_el_li)),t_n_li,t_k_li,t_el_li,t_el_coe_li):
-          dim_li_idx_ii=self.dim_list().index(t_n_li[ii])
-          t_i_el=Element(t_n,t_el,t_el_coe)
-          t_i_el_sub=t_i_el.make_sub_ellist_list(t_n,t_k,t_el,dim_li_idx_ii)
-          i_li.extend(t_i_el_sub[0])
-          j_li.extend(t_i_el_sub[1])
-          sub_ellili.extend(t_i_el_sub[2])
-          sub_el_coelili.extend(t_i_el_sub[3])
-          res_sub_ref.extend(t_i_el_sub[4])
-          break_flg=t_i_el_sub[5]
+        sub_ellili,sub_el_coelili= [],[]
+        for ti,(tn,tk,tel,tel_coe) in enumerate(zip(tn_li,tk_li,tel_li,tel_coe_li)):
+          dim_li_idx_ti= self.dim_list().index(tn_li[ti])
+          ti_el= Element(tn,tel,tel_coe)
+# ti_el: 各tiに対応するelement
+          ti_el_sub= ti_el.make_sub_ellist_list(tn,tk,tel,dim_li_idx_ti)
+          i_li.extend(ti_el_sub[0])
+          j_li.extend(ti_el_sub[1])
+          sub_ellili.extend(ti_el_sub[2])
+          sub_el_coelili.extend(ti_el_sub[3])
+          res_sub_ref.extend(ti_el_sub[4])
+          break_flg=ti_el_sub[5]
           if break_flg: break
-        change_el=self.change_el_list_list(i_li,j_li,sub_ellili,sub_el_coelili)
-        elli1=change_el[0]
-        el_coeli1=change_el[1]
-        el1=Element(self.n,elli1,el_coeli1,totalcoe)
+        elli1,el_coeli1= self.change_el_list_list(i_li,j_li,sub_ellili,sub_el_coelili)
+        el1= Element(self.n,elli1,el_coeli1,totalcoe)
+# el1: tの場合の結果のelement
         if i_li!=[]: res_sub_tex.append(el1.tex())
         res=el1.total_coe_times_sub_comp()
         res_sub_tex.extend(res[0])
         res_sub_ref.extend(res[1])
         res_coe.extend(res[2])
-        flg=res[3]
-        if flg: break        
+        is_zero=res[3]
+        if is_zero: break        
       return res_sub_tex,res_sub_ref,res_coe
 
     def change_first_dim(self,fst_dim):
