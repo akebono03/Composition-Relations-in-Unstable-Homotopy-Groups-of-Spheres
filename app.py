@@ -1914,7 +1914,7 @@ def register():
       reference_tex_list.append('')
   elif display_mode=='E-image':
     disp0=f'E({disp0})'
-    el1_0=Element(n, el_list1_0,coe_list1_0)
+    el1_0=Element(n+1, el_list1_0,coe_list1_0)
     if el1_0.element_to_id()[0]:
       if hgE.rep_linear_tex(hg.E_coe(el1_0.element_to_id()[1])[0]) not in relation_tex_list \
       or hg.E_coe(el1_0.element_to_id()[1])[1] not in relation_tex_list:
