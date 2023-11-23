@@ -2010,14 +2010,14 @@ def register():
       if row['orders']==0: group1.append('0')
       elif row['orders']==inf: group1.append('Z')
       else: group1.append(f"Z_{ {int(row['orders'])} }")
-      group1_gen=[hgP.rep_linear_tex(hgP.gen_coe_list(j)) for j in range(hgP.direct_sum())]
-      group1_tex_list=[gr+'\{'+gen+'\}' for (gr,gen) in zip(group1,group1_gen)]
-      group1_tex=' \oplus '.join(group1_tex_list)
-      if well_def1_relation=='0' and well_def2_relation=='0':
-        if include_id[0]:
-          hg_P_image_tex=hg.P_image_tex(include_id[1])
-          include_element_tex=f'\Delta({include_element_tex})\ = '+hg_P_image_tex[0]
-          if hg_P_image_tex[1]!=None: reference_tex_list[0]=reference_tex_list[0]+' \ , \ '+hg_P_image_tex[1]
+    group1_gen=[hgP.rep_linear_tex(hgP.gen_coe_list(j)) for j in range(hgP.direct_sum())]
+    group1_tex_list=[gr+'\{'+gen+'\}' for (gr,gen) in zip(group1,group1_gen)]
+    group1_tex=' \oplus '.join(group1_tex_list)
+    if well_def1_relation=='0' and well_def2_relation=='0':
+      if include_id[0]:
+        hg_P_image_tex=hg.P_image_tex(include_id[1])
+        include_element_tex=f'\Delta({include_element_tex})\ = '+hg_P_image_tex[0]
+        if hg_P_image_tex[1]!=None: reference_tex_list[0]=reference_tex_list[0]+' \ , \ '+hg_P_image_tex[1]
   elif display_mode=='E-image':
     if k<=-1: query=f'select*from sphere where n={0} and k={-1}'
     elif k+2>=n+1: query=f'select*from sphere where n={n+1} and k={k}'
@@ -2026,14 +2026,14 @@ def register():
       if row['orders']==0: group1.append('0')
       elif row['orders']==inf: group1.append('Z')
       else: group1.append(f"Z_{ {int(row['orders'])} }")
-      group1_gen=[hgE.rep_linear_tex(hgE.gen_coe_list(j)) for j in range(hgE.direct_sum())]
-      group1_tex_list=[gr+'\{'+gen+'\}' for (gr,gen) in zip(group1,group1_gen)]
-      group1_tex=' \oplus '.join(group1_tex_list)
-      if well_def1_relation=='0' and well_def2_relation=='0':
-        if include_id[0]:
-          hg_E_image_tex=hg.E_image_tex(include_id[1])
-          include_element_tex=f' E ({include_element_tex})\ = '+hg_E_image_tex[0]
-          if hg_E_image_tex[1]!=None: reference_tex_list[0]=reference_tex_list[0]+' \ , \ '+hg_E_image_tex[1]
+    group1_gen=[hgE.rep_linear_tex(hgE.gen_coe_list(j)) for j in range(hgE.direct_sum())]
+    group1_tex_list=[gr+'\{'+gen+'\}' for (gr,gen) in zip(group1,group1_gen)]
+    group1_tex=' \oplus '.join(group1_tex_list)
+    if well_def1_relation=='0' and well_def2_relation=='0':
+      if include_id[0]:
+        hg_E_image_tex=hg.E_image_tex(include_id[1])
+        include_element_tex=f' E ({include_element_tex})\ = '+hg_E_image_tex[0]
+        if hg_E_image_tex[1]!=None: reference_tex_list[0]=reference_tex_list[0]+' \ , \ '+hg_E_image_tex[1]
   elif display_mode=='H-image':
     if k-n+1<=-1: query=f'select*from sphere where n={0} and k={-1}'
     elif k-n+3>=2*n-1: query=f'select*from sphere where n={2*n-1} and k={k-n+1}'
