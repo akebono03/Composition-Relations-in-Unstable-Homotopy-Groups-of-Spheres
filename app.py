@@ -1931,6 +1931,15 @@ def register():
     if el1_0.element_to_id()[0]:
       relation_tex_list.append(hgH.rep_linear_tex(hg.H_coe(el1_0.element_to_id()[1])[0],total_coe1))
       reference_tex_list.append(hg.H_coe(el1_0.element_to_id()[1])[1])
+    elif len(el_list1_0)>=2 and el1_0.sus_list()[0]>0:
+      el_list1_0_0=el_list1_0[:1]*2
+      coe_list1_0_0=coe_list1_0[:1]*2
+      el_list1_0_1=el_list1_0[1:]
+      coe_list1_0_1=coe_list1_0[1:]
+      el1_0_0=Element(2*n-1,el_list1_0_0,coe_list1_0_0)
+      el1_0_1=Element(el1_0.dim_list()[1],el_list1_0_1,coe_list1_0_1)
+      relation_tex_list.append(el1_0_0.tex()+f'H({ el1_0_1.tex() })')
+      reference_tex_list.append('Prop 2.2, \ H(E\gamma\circ\\alpha)=E(\gamma\wedge\gamma)\circ H(\\alpha)')
     else:
       relation_tex_list.append('')
       reference_tex_list.append('')
