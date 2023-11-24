@@ -1919,9 +1919,10 @@ def register():
       relation_tex_list.append(el1_0_0.tex()+f'H({el1_0_1.tex()})')
       reference_tex_list.append('Prop 2.2, \ H(E\gamma\circ\\alpha)=E(\gamma\wedge\gamma)\circ H(\\alpha)')
       hg1_0_1=HomotopyGroup(n1_0_1,k1_0_1)
-      ell1_0_1=ElementLinear(2*n1_0_1-1,n1_0_1-k1_0_1+1,hg1_0_1.H_coe(el1_0_1.element_to_id()[1])[0])
+      hg1_0_1_H_coe=hg1_0_1.H_coe(el1_0_1.element_to_id()[1])[0]
+      ell1_0_1=ElementLinear(2*n1_0_1-1,k1_0_1-n1_0_1+1,hg1_0_1_H_coe)
       add1_0_1=ell1_0_1.linear_to_el_list()
-      if len(add1_0_1[0])==1:
+      if len(hg1_0_1_H_coe)==1:
         el_list1_0_0+=add1_0_1[0]
         coe_list1_0_0+=add1_0_1[1]
         el0=Element(2*n-1,el_list1_0_0,coe_list1_0_0)
