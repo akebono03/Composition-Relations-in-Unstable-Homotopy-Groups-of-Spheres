@@ -1971,7 +1971,9 @@ def register():
       relation_tex_list.extend(relation_tex_list1)
       reference_tex_list.extend(reference_tex_list1)
     else:
-      relation_tex_list,reference_tex_list,return_coe_list=el0.deformation_relation(coe_list0)
+      add_relation_tex_list,add_reference_tex_list,return_coe_list=el0.deformation_relation(coe_list0)
+      relation_tex_list+=add_relation_tex_list
+      reference_tex_list+=add_reference_tex_list
       if return_coe_list==[]:
         el0_subcomp0=el0.sub_comp(0,2)
         el0_0=Element(n,el0_subcomp0[0],el0_subcomp0[1])
