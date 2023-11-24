@@ -1899,6 +1899,33 @@ def register():
       relation_tex_list.extend(deform_relation_tex_list)
       reference_tex_list.extend(deform_reference_tex_list)
 
+# Prop2.2が適用できる場合
+  if display_mode=='H-image' and len(el_list1_0)>=2:
+    el1_0=Element(n,el_list1_0,coe_list1_0)
+    if el1_0.sus_list()[0]>0:
+      disp0=f'H({disp0})'
+      el_list1_0_0=el_list1_0[:1]*2
+      coe_list1_0_0=coe_list1_0[:1]*2
+      el_list1_0_1=el_list1_0[1:]
+      coe_list1_0_1=coe_list1_0[1:]
+      el1_0_0=Element(2*n-1,el_list1_0_0,coe_list1_0_0)
+      n1_0_1=el1_0.dim_list()[1]
+      k1_0_1=el1_0.dim_list()[-1]-el1_0.dim_list()[1]
+      el1_0_1=Element(n1_0_1,el_list1_0_1,coe_list1_0_1)
+      relation_tex_list.append(el1_0_0.tex()+f'H({el1_0_1.tex()})')
+      reference_tex_list.append('Prop 2.2, \ H(E\gamma\circ\\alpha)=E(\gamma\wedge\gamma)\circ H(\\alpha)')
+      hg1_0_1=HomotopyGroup(n1_0_1,k1_0_1)
+      ell1_0_1=ElementLinear(2*n1_0_1-1,n1_0_1-k1_0_1+1,hg1_0_1.H_coe(el1_0_1.element_to_id()[1])[0])
+      add1_0_1=ell1_0_1.linear_to_el_list()
+      if len(add1_0_1[0])==1:
+        el_list1_0_0+=add1_0_1[0]
+        coe_list1_0_0+=add1_0_1[1]
+        el0=Element(2*n-1,el_list1_0_0,coe_list1_0_0)
+        relation_tex_list.append(el0.tex())
+        reference_tex_list.append(hg1_0_1.H_coe(el1_0_1.element_to_id()[1])[1])
+        display_mode='tmp'
+###############################
+
   hgP=HomotopyGroup((n-1)//2,n+k-2-(n-1)//2)
   hgE=HomotopyGroup(n+1,k)
   hgH=HomotopyGroup(2*n-1,k-n+1)
