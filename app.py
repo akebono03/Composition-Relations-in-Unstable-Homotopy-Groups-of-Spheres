@@ -1908,27 +1908,34 @@ def register():
       reference_tex_list.append('H\circ E=0')
       el1_0=Element(n,[0],[0])
     elif len(el_list1_0)>=2 and el1_0.sus_list()[0]>0:
-      el_list1_0_0=el_list1_0[:1]*2
-      coe_list1_0_0=coe_list1_0[:1]*2
-      el_list1_0_1=el_list1_0[1:]
-      coe_list1_0_1=coe_list1_0[1:]
-      el1_0_0=Element(2*n-1,el_list1_0_0,coe_list1_0_0)
-      n1_0_1=el1_0.dim_list()[1]
-      k1_0_1=el1_0.dim_list()[-1]-el1_0.dim_list()[1]
-      el1_0_1=Element(n1_0_1,el_list1_0_1,coe_list1_0_1)
-      relation_tex_list.append(el1_0_0.tex()+f'H({el1_0_1.tex()})')
-      reference_tex_list.append('Prop 2.2, \ H(E\gamma\circ\\alpha)=E(\gamma\wedge\gamma)\circ H(\\alpha)')
-      hg1_0_1=HomotopyGroup(n1_0_1,k1_0_1)
-      hg1_0_1_H_coe=hg1_0_1.H_coe(el1_0_1.element_to_id()[1])[0]
-      ell1_0_1=ElementLinear(2*n1_0_1-1,k1_0_1-n1_0_1+1,hg1_0_1_H_coe)
-      add1_0_1=ell1_0_1.linear_to_el_list()
-      if len(hg1_0_1_H_coe)==1:
-        el_list1_0_0+=add1_0_1[0]
-        coe_list1_0_0+=add1_0_1[1]
-        el0=Element(2*n-1,el_list1_0_0,coe_list1_0_0)
-        relation_tex_list.append(el0.tex())
-        reference_tex_list.append(hg1_0_1.H_coe(el1_0_1.element_to_id()[1])[1])
-      display_mode='tmp'
+      try:
+        el_list1_0_0=el_list1_0[:1]*2
+        coe_list1_0_0=coe_list1_0[:1]*2
+        el_list1_0_1=el_list1_0[1:]
+        coe_list1_0_1=coe_list1_0[1:]
+        el1_0_0=Element(2*n-1,el_list1_0_0,coe_list1_0_0)
+        n1_0_1=el1_0.dim_list()[1]
+        k1_0_1=el1_0.dim_list()[-1]-el1_0.dim_list()[1]
+        el1_0_1=Element(n1_0_1,el_list1_0_1,coe_list1_0_1)
+        relation_tex_list.append(f'{el1_0_0.tex()} H({el1_0_1.tex()})')
+        reference_tex_list.append('Prop 2.2, \ H(E\gamma\circ\\alpha)=E(\gamma\wedge\gamma)\circ H(\\alpha)')
+        hg1_0_1=HomotopyGroup(n1_0_1,k1_0_1)
+        hg1_0_1_H_coe=hg1_0_1.H_coe(el1_0_1.element_to_id()[1])[0]
+        ell1_0_1=ElementLinear(2*n1_0_1-1,k1_0_1-n1_0_1+1,hg1_0_1_H_coe)
+        add1_0_1=ell1_0_1.linear_to_el_list()
+        if sum([x>0 for x in hg1_0_1_H_coe])==1:
+          el_list1_0_0+=add1_0_1[0]
+          coe_list1_0_0+=add1_0_1[1]
+          el0=Element(2*n-1,el_list1_0_0,coe_list1_0_0)
+          relation_tex_list.append(el0.tex())
+          reference_tex_list.append(hg1_0_1.H_coe(el1_0_1.element_to_id()[1])[1])
+        else:
+          hg1_0_2=HomotopyGroup(2*n1_0_1-1,k1_0_1-n1_0_1+1)
+          relation_tex_list.append( f'{el1_0_0.tex()}({hg1_0_2.rep_linear_tex(hg1_0_1_H_coe)})')
+          reference_tex_list.append( hg1_0_1.H_coe(el1_0_1.element_to_id()[1])[1])
+          el0=Element(2*n-1,[],[])
+        display_mode='tmp'
+      except: pass
 ###############################
 
   hgP=HomotopyGroup((n-1)//2,n+k-2-(n-1)//2)
@@ -1972,15 +1979,15 @@ def register():
       relation_tex_list.extend(relation_tex_list1)
       reference_tex_list.extend(reference_tex_list1)
     else:
-      add_relation_tex_list,add_reference_tex_list,return_coe_list=el0.deformation_relation(coe_list0)
-      relation_tex_list+=add_relation_tex_list
-      reference_tex_list+=add_reference_tex_list
-      if return_coe_list==[]:
-        el0_subcomp0=el0.sub_comp(0,2)
-        el0_0=Element(n,el0_subcomp0[0],el0_subcomp0[1])
-        hg0_0=HomotopyGroup(n,el0_0.k)
-        el0_0_has_relation=el0_0.has_relation()
-        try:
+      try:
+        add_relation_tex_list,add_reference_tex_list,return_coe_list=el0.deformation_relation(coe_list0)
+        relation_tex_list+=add_relation_tex_list
+        reference_tex_list+=add_reference_tex_list
+        if return_coe_list==[]:
+          el0_subcomp0=el0.sub_comp(0,2)
+          el0_0=Element(n,el0_subcomp0[0],el0_subcomp0[1])
+          hg0_0=HomotopyGroup(n,el0_0.k)
+          el0_0_has_relation=el0_0.has_relation()
           hg0_0_rep_coe_to_el_list=hg0_0.rep_coe_to_el_list(el0_0_has_relation[1])
           el0_0_list=[]
           for el in hg0_0_rep_coe_to_el_list[0]:
@@ -1992,12 +1999,9 @@ def register():
             el0_1=Element(n,el0_0_list_el)
             el0_1_deformation_relation=el0_1.deformation_relation()
             np_array.append(np.array(el0_1_deformation_relation[2]))
-          pass
-          
           sum_coe=sum(np_array)
-          relation_tex_list.append(hg.rep_linear_tex(sum_coe))
-        except:pass
-
+          relation_tex_list.append(hg.rep_linear_tex(sum_coe)+'aaa')
+      except: pass
   if display_mode=='tmp':
     display_mode='H-image'
 
