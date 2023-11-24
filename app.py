@@ -2000,6 +2000,9 @@ def register():
           relation_tex_list.append(hg.rep_linear_tex(sum_coe))
         except:pass
 
+  if display_mode=='tmp':
+    display_mode='H-image'
+
   well_def1=''
   well_def2=''
   well_def1_relation=''
