@@ -1965,14 +1965,16 @@ def register():
           relation_tex_list.append(relation)
           reference_tex_list.append(reference)
   elif display_mode=='H-image':
-    el1_0=Element(n,el_list1_0,coe_list1_0)
-    if el1_0.element_to_id()[0]:
-      relation_tex_list.append(hgH.rep_linear_tex(hg.H_coe(el1_0.element_to_id()[1])[0],total_coe1))
-      reference_tex_list.append(hg.H_coe(el1_0.element_to_id()[1])[1])
-    elif relation_tex_list[-1]=='0': pass
-    else:
-      relation_tex_list.append('')
-      reference_tex_list.append('')
+    try:
+      el1_0=Element(n,el_list1_0,coe_list1_0)
+      if el1_0.element_to_id()[0]:
+        relation_tex_list.append(hgH.rep_linear_tex(hg.H_coe(el1_0.element_to_id()[1])[0],total_coe1))
+        reference_tex_list.append(hg.H_coe(el1_0.element_to_id()[1])[1])
+      elif relation_tex_list[-1]=='0': pass
+      else:
+        relation_tex_list.append('')
+        reference_tex_list.append('')
+    except: pass
   elif '{' not in symbols0 and '[' not in symbols0 and display_mode!='Group-registration':
     if '+' in symbols0:
       relation_tex_list1,reference_tex_list1=el0.el_sum(symbols0)
