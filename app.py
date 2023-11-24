@@ -1900,10 +1900,14 @@ def register():
       reference_tex_list.extend(deform_reference_tex_list)
 
 # Prop2.2が適用できる場合
-  if display_mode=='H-image' and len(el_list1_0)>=2:
+  if display_mode=='H-image':
+    disp0=f'H({disp0})'
     el1_0=Element(n,el_list1_0,coe_list1_0)
-    if el1_0.sus_list()[0]>0:
-      disp0=f'H({disp0})'
+    if all([s>0 for s in el1_0.sus_list()]):
+      relation_tex_list.append('0')
+      reference_tex_list.append('H\circ E=0')
+      el1_0=Element(n,[0],[0])
+    elif len(el_list1_0)>=2 and el1_0.sus_list()[0]>0:
       el_list1_0_0=el_list1_0[:1]*2
       coe_list1_0_0=coe_list1_0[:1]*2
       el_list1_0_1=el_list1_0[1:]
@@ -1923,7 +1927,7 @@ def register():
         el0=Element(2*n-1,el_list1_0_0,coe_list1_0_0)
         relation_tex_list.append(el0.tex())
         reference_tex_list.append(hg1_0_1.H_coe(el1_0_1.element_to_id()[1])[1])
-        display_mode='tmp'
+      display_mode='tmp'
 ###############################
 
   hgP=HomotopyGroup((n-1)//2,n+k-2-(n-1)//2)
@@ -1953,20 +1957,11 @@ def register():
           relation_tex_list.append(relation)
           reference_tex_list.append(reference)
   elif display_mode=='H-image':
-    disp0=f'H({disp0})'
     el1_0=Element(n,el_list1_0,coe_list1_0)
     if el1_0.element_to_id()[0]:
       relation_tex_list.append(hgH.rep_linear_tex(hg.H_coe(el1_0.element_to_id()[1])[0],total_coe1))
       reference_tex_list.append(hg.H_coe(el1_0.element_to_id()[1])[1])
-    elif len(el_list1_0)>=2 and el1_0.sus_list()[0]>0:
-      el_list1_0_0=el_list1_0[:1]*2
-      coe_list1_0_0=coe_list1_0[:1]*2
-      el_list1_0_1=el_list1_0[1:]
-      coe_list1_0_1=coe_list1_0[1:]
-      el1_0_0=Element(2*n-1,el_list1_0_0,coe_list1_0_0)
-      el1_0_1=Element(el1_0.dim_list()[1],el_list1_0_1,coe_list1_0_1)
-      relation_tex_list.append(el1_0_0.tex()+f'H({ el1_0_1.tex() })')
-      reference_tex_list.append('Prop 2.2, \ H(E\gamma\circ\\alpha)=E(\gamma\wedge\gamma)\circ H(\\alpha)')
+    elif relation_tex_list[-1]=='0': pass
     else:
       relation_tex_list.append('')
       reference_tex_list.append('')
@@ -1976,7 +1971,9 @@ def register():
       relation_tex_list.extend(relation_tex_list1)
       reference_tex_list.extend(reference_tex_list1)
     else:
-      relation_tex_list,reference_tex_list,return_coe_list=el0.deformation_relation(coe_list0)
+      add_relation_tex_list,add_reference_tex_list,return_coe_list=el0.deformation_relation(coe_list0)
+      relation_tex_list+=add_relation_tex_list
+      reference_tex_list+=add_reference_tex_list
       if return_coe_list==[]:
         el0_subcomp0=el0.sub_comp(0,2)
         el0_0=Element(n,el0_subcomp0[0],el0_subcomp0[1])
