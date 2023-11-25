@@ -1883,11 +1883,9 @@ def register():
   #       coe_list1_0[i]=coe_list1_0[i]*coe_list1_0[i-1]**2
   #       coe_list1_0[i-1]=1
 
-  print(coe_list1_0)
   el_list2_0=el_list1_0
   coe_list2_0=coe_list1_0
   el_list1_0,coe_list1_0,total_coe1=hg.el_coe_out(el_list2_0, coe_list2_0)
-  print(coe_list1_0,total_coe1)
 
   if '[' in symbols0:
     wp_el0=Element(n,wp_ellist[0],wp_coelist[0])
