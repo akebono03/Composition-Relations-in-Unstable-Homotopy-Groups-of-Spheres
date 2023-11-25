@@ -1883,9 +1883,11 @@ def register():
   #       coe_list1_0[i]=coe_list1_0[i]*coe_list1_0[i-1]**2
   #       coe_list1_0[i-1]=1
 
+  print(coe_list1_0)
   el_list2_0=el_list1_0
   coe_list2_0=coe_list1_0
   el_list1_0,coe_list1_0,total_coe1=hg.el_coe_out(el_list2_0, coe_list2_0)
+  print(coe_list1_0,total_coe1)
 
   if '[' in symbols0:
     wp_el0=Element(n,wp_ellist[0],wp_coelist[0])
@@ -1917,7 +1919,7 @@ def register():
         coe_list1_0_0=coe_list1_0[:1]*2
         el_list1_0_1=el_list1_0[1:]
         coe_list1_0_1=coe_list1_0[1:]
-        el1_0_0=Element(2*n-1,el_list1_0_0,coe_list1_0_0)
+        el1_0_0=Element(2*n-1,el_list1_0_0,coe_list1_0_0,total_coe1)
         n1_0_1=el1_0.dim_list()[1]
         k1_0_1=el1_0.dim_list()[-1]-el1_0.dim_list()[1]
         el1_0_1=Element(n1_0_1,el_list1_0_1,coe_list1_0_1)
@@ -1930,11 +1932,9 @@ def register():
         if sum([x>0 for x in hg1_0_1_H_coe])==1:
           el_list1_0_0+=add1_0_1[0]
           coe_list1_0_0+=add1_0_1[1]
-          el0=Element(2*n-1,el_list1_0_0,coe_list1_0_0)
+          el0=Element(2*n-1,el_list1_0_0,coe_list1_0_0,total_coe1)
           relation_tex_list.append(el0.tex())
           reference_tex_list.append(hg1_0_1.H_coe(el1_0_1.element_to_id()[1])[1])
-          el_list0=el_list1_0_0
-          coe_list0=coe_list1_0_0
         else:
           hg1_0_2=HomotopyGroup(2*n1_0_1-1,k1_0_1-n1_0_1+1)
           relation_tex_list.append( f'{el1_0_0.tex()}({hg1_0_2.rep_linear_tex(hg1_0_1_H_coe)})')
