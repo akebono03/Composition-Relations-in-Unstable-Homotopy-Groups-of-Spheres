@@ -212,11 +212,14 @@ def register():
       return res
 
     def delete_iota(self, el_list,el_coe_list):
+      if el_list==[]: return [],[]
       delete_num=[]
       for i,elem in enumerate(el_list):
         if elem==1 and el_coe_list[i]==1 and (i>=1 or (i==0 and len(el_list)>=2)): delete_num.append(i)
       res_el_list=[el_list[i] for i in range(len(el_list)) if i not in delete_num]
       res_el_coe_list= [el_coe_list[i] for i in range(len(el_list)) if i not in delete_num]
+      res_el_list=res_el_list if res_el_list!=[] else [1]
+      res_el_coe_list=res_el_coe_list if res_el_coe_list!=[] else [1]
       return res_el_list, res_el_coe_list
 
     def can_take_out_el_coe( self,el_list,i):
@@ -1109,7 +1112,7 @@ def register():
       coe_li1=[coe for coe in self.el_coelist]
       selfelli,selfel_coeli,selftot_coe=hg.el_coe_out(el_li1,coe_li1)
       selftot_coe*=self.total_coe
-      
+
       coeout_el=Element(self.n,selfelli,selfel_coeli,selftot_coe)
       # coeout_el = Element(self.n, selfellist, selfel_coelist, 1)
       coeout_is_rep=coeout_el.is_rep_element()
@@ -1134,7 +1137,8 @@ def register():
 # case with representation element
       elif hg_is_zero==False and coeout_is_rep[0]:
         rel_tex_li.append(hg.rep_linear_tex(coeout_is_rep[2],selftot_coe))
-        gencoe_li=[coe*self.total_coe for coe in coeout_is_rep[2]]
+        # gencoe_li=[coe*self.total_coe for coe in coeout_is_rep[2]]
+        gencoe_li=[coe*selftot_coe for coe in coeout_is_rep[2]]
         res_coe_li=hg.mod_gen_coe_list(gencoe_li)
         ref_tex_li.append(f'(Generator)')
 
@@ -1873,11 +1877,11 @@ def register():
   else: disp0=el0_0.tex()
 
 # case with Hopf map
-  for i,elem in enumerate(el_list1_0):
-    if elem in {2,4,9} and i>=1 and hg.el_sus_list(el_list1_0)[i]==0:
-      if el_list1_0[i-1]==1:
-        coe_list1_0[i]=coe_list1_0[i]*coe_list1_0[i-1]**2
-        coe_list1_0[i-1]=1
+  # for i,elem in enumerate(el_list1_0):
+  #   if elem in {2,4,9} and i>=1 and hg.el_sus_list(el_list1_0)[i]==0:
+  #     if el_list1_0[i-1]==1:
+  #       coe_list1_0[i]=coe_list1_0[i]*coe_list1_0[i-1]**2
+  #       coe_list1_0[i-1]=1
 
   el_list2_0=el_list1_0
   coe_list2_0=coe_list1_0
@@ -1929,6 +1933,8 @@ def register():
           el0=Element(2*n-1,el_list1_0_0,coe_list1_0_0)
           relation_tex_list.append(el0.tex())
           reference_tex_list.append(hg1_0_1.H_coe(el1_0_1.element_to_id()[1])[1])
+          el_list0=el_list1_0_0
+          coe_list0=coe_list1_0_0
         else:
           hg1_0_2=HomotopyGroup(2*n1_0_1-1,k1_0_1-n1_0_1+1)
           relation_tex_list.append( f'{el1_0_0.tex()}({hg1_0_2.rep_linear_tex(hg1_0_1_H_coe)})')
