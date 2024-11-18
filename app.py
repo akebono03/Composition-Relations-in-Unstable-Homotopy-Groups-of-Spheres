@@ -1892,9 +1892,14 @@ def register():
     p_ellist=wp_ellist[1]+wp_ellist[2]+wp_ellist[3]
     p_coelist=wp_coelist[1]+wp_coelist[2]+wp_coelist[3]
     wp_el1=Element(wp_dimlist[1]*2+1,p_ellist,p_coelist)
-    relation_tex_list.append(f'{wp_el0.tex()} \Delta({wp_el1.tex()})')
-    reference_tex_list.append('')
-
+    mode={'relation':'','E-image':'E','H-image':'H','P-image':'\Delta'}
+    if display_mode=='relation':
+      relation_tex_list.append(f'{wp_el0.tex()} \Delta({wp_el1.tex()})')
+      reference_tex_list.append('')
+    else:
+      relation_tex_list.append(f'{mode[display_mode]}({wp_el0.tex()} \Delta({wp_el1.tex()}))')
+      reference_tex_list.append('')
+    # print(wp_change_ellist)
     if wp_change_ellist[0]!=[]:
       el_wp=Element(n,wp_change_ellist[0],wp_change_ellist[1])
       relation_tex_list.append(el_wp.tex())
@@ -1902,6 +1907,8 @@ def register():
       deform_relation_tex_list,deform_reference_tex_list,deform_return_coe_list=el_wp.deformation_relation(wp_change_ellist[1])
       relation_tex_list.extend(deform_relation_tex_list)
       reference_tex_list.extend(deform_reference_tex_list)
+    else:
+      pass
 
 # Prop2.2が適用できる場合
   if display_mode=='H-image':
