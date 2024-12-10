@@ -13,5 +13,6 @@ This application gives relations of compositions, Toda brackets and Whitehead pr
 [Oda] N. Oda: On the Orders of the Generators in the 18-Stem of the Homotopy Groups of Spheres, Adv. Stud. Pure Math. 9(1986), 231-236.  
 
 ![20241210_relation01](https://github.com/user-attachments/assets/4baa71e1-5937-431c-894b-7196b96ed72a)
+
 ![20241210_relation02](https://github.com/user-attachments/assets/e4428468-a95f-4bf9-8917-0d1e5a1508ab)
 
