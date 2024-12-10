@@ -1,5 +1,5 @@
 # Composition-Relations-in-Unstable-Homotopy-Groups-of-Spheres
-TB_relation.py
+app.py
 
 https://composition-relations-in-unstable.onrender.com
 
@@ -11,3 +11,7 @@ This application gives relations of compositions, Toda brackets and Whitehead pr
 [MMO]  M. Mimura, M. Mori and N. Oda: Determination of 2-components of the 23 and 24-stems in homotopy groups of spheres, Mem. Fac. Sci. Kyushu Univ., 29(1975), 1-42.  
 [O1][O2][O3] N. Oda: Unstable Homotopy Groups of Spheres, Bull. Inst. Adv. Res. Fukuoka Univ., 44(1979), 49-152.  
 [Oda] N. Oda: On the Orders of the Generators in the 18-Stem of the Homotopy Groups of Spheres, Adv. Stud. Pure Math. 9(1986), 231-236.  
+
+![20241210_relation01](https://github.com/user-attachments/assets/4baa71e1-5937-431c-894b-7196b96ed72a)
+![20241210_relation02](https://github.com/user-attachments/assets/e4428468-a95f-4bf9-8917-0d1e5a1508ab)
+
